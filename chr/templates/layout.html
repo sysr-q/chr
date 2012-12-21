@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	{% block head %}
+	<meta charset="utf-8" />
+	<title>{% block title %}{% endblock %}</title>
+	<link rel="stylesheet" href="/static/960.css"/>
+	<link rel="stylesheet" href="/static/main.css"/>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js" type="text/javascript"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+	{% endblock %}
+</head>
+<body>
+	<div class="container_12 content">
+		<div class="push_3 grid_6" id="stats">
+			<br />
+			{# It's nice to have flashed messages in every page, easily. #}
+			{% with messages = get_flashed_messages(with_categories=true) %}
+			{% if messages %}
+				<div id="flashes">
+				{% for category, message in messages %}
+				<p class="flash flash-{{ category }} flash-num-{{ loop.index }}">{{ message }}</p>
+				{% endfor %}
+				</div>
+			{% endif %}
+			{% endwith %}{% block content %}{% endblock %}
+		</div>
+	</div>
+	<script type="text/javascript">
+		var time = 1000 * 2; // Two seconds.
+		var next_timer = time;
+		$(document).ready(function() {
+			$('#flashes p').each(function(index) {
+				setTimeout(function() {
+					var p = '.flash-num-' + (index + 1);
+					$(p).slideUp("slow", function() {
+						$(p).remove();
+					})
+				}, next_timer);
+				next_timer += time;
+			});
+		});
+	</script>
+</body>
+</html>

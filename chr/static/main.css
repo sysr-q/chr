@@ -1,0 +1,200 @@
+[class^="chr-"] {
+  transition: all 0.15s linear 0s;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+input[type="text"][class^="chr-"]:focus {
+  background-color: #FAFAFA;
+}
+
+.chr-header {
+  color: #2BA6CB;
+}
+
+.chr-noscript {
+  color: #E03A09;
+  font-size: 20px;
+}
+
+.chr-text-long {
+  width: 100%;
+  height: 28px;
+  background-color: #FFFFFF;
+  padding: 2px 4px 2px 4px;
+  border-radius: 2px 2px 2px 2px;
+  display: block;
+  margin-bottom: 5px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+  border: 1px solid #CCCCCC;
+}
+
+.chr-text-short {
+  width: 80px;
+  height: 28px;
+  margin-right: 5px;
+  padding: 2px 4px 2px 4px;
+  float: left;
+  background-color: #FFFFFF;
+  border-radius: 2px 2px 2px 2px;
+  display: block;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+  border: 1px solid #CCCCCC;
+}
+
+.chr-text-short-sub {
+  vertical-align: middle;
+  height: 28px;
+  display: inline-block; /* so it doesn't bump out .chr-button-shrink */
+}
+
+.chr-button-shrink {
+  width: 80px;
+  height: 28px;
+
+  float: right;
+  margin: 0;
+  padding: 0 auto;
+
+  background: none repeat scroll 0 0 #2BA6CB;
+  border: 1px solid #1E728C;
+  border-radius: 2px 2px 2px 2px;
+  box-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5) inset;
+  color: #FFFFFF;
+  cursor: pointer;
+  display: inline-block;
+  font-family: inherit;
+  font-weight: bold;
+  line-height: 1;
+  position: relative;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.15s ease-in-out 0s;
+}
+
+body {
+  font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+  font-size: 13px;
+  background-color: #EBF2F5;
+  color: #6F6F6F;
+  margin: 0 auto;
+}
+
+.container_12 {
+  color: #000000;
+  background-color: #EBF2F5;
+}
+
+.content {
+  
+}
+
+a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:link {
+  color: #1F1F1F;
+}
+
+a:visited {
+  color: #5C5C5C;
+}
+
+a:hover, a:active {
+  color: #757575;
+}
+
+a.no_hover:link, a.no_hover:hover, a.no_hover:visited, a.no_hover:active {
+  color: inherit;
+}
+
+.one-column-emphasis
+{
+  font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+  font-size: 12px;
+  margin: 45px;
+  width: 600px;
+  text-align: left;
+  border-collapse: collapse;
+}
+
+.one-column-emphasis th
+{
+  font-size: 14px;
+  font-weight: normal;
+  padding: 12px 15px;
+  color: #039;
+}
+
+.one-column-emphasis td
+{
+  padding: 10px 15px;
+  color: #669;
+  border-top: 1px solid #e8edff;
+}
+
+.oce-first
+{
+  background: #d0dafd;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+}
+
+.one-column-emphasis tr:hover td
+{
+  color: #339;
+  background: #d6ddff;
+}
+
+.one-column-emphasis tr:hover .green
+{
+  color: #4DBD33;
+}
+.one-column-emphasis tr:hover .red
+{
+  color: #F00;
+}
+
+#flashes {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+}
+
+.flash {
+  position: relative;
+  top: 0px;
+  left: 0px;
+  border: 1px solid;
+  margin: 0px;
+  padding: 8px 8px 8px 8px;
+  width: 100%;
+  font: bold 14px verdana;
+  -moz-box-shadow-bottom: 0 0 5px #888;
+  -webkit-box-shadow-bottom: 0 0 5px#888;
+  box-shadow-bottom: 0 0 5px #888;
+  text-shadow: 2px 2px 2px #ccc;
+}
+
+.flash-info {
+  color: #00529B;
+  background: #BDE5F8;
+}
+.flash-success {
+  color: #4F8A10;
+  background: #DFF2BF;
+}
+.flash-warning {
+  color: #9F6000;
+  background: #FEEFB3;
+}
+.flash-error {
+  color: #D8000C;
+  background: #FFBABA;
+}

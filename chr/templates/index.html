@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+{% block head %}{{ super() }}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
+
+<script type="text/javascript">
+	//TODO: Put in external script.
+	function refresh_captcha() {
+		Recaptcha.create("{{ recaptcha_key }}",
+			"recaptcha-goes-here",
+			{
+				theme: "clean",
+				callback: function() {}
+			}
+		);
+	}
+
+	$(document).ready(function() {
+		refresh_captcha();
+
+		$("div#form-modal").dialog({
+			autoOpen: false,
+			closeOnEscape: true,
+			draggable: false,
+			hide: "clip",
+			resizable: false,
+			height: 300,
+			width: 475,
+			modal: true,
+			buttons: {
+				"Submit": function() {
+					var valid = true;
+					$("#shrink-url").submit(function() {
+						console.log("Is: " + $(this).attr('method'));
+						console.log($(this).serialize());
+						$.post(
+							$(this).attr('action'),
+							$(this).serialize(),
+							function(data, textStatus, jqXHR) {
+								$("#results").html("I did it, I did it!");
+								//$("#results").html(data.error + "<br/>" + data.message + "<br/>" + data.url);
+							}
+						);
+						return false;
+					});
+					$("form#shrink-url").submit();
+					refresh_captcha();
+					// submit blah, check if it's good
+					if (valid) {
+						$(this).dialog("close");
+					}
+				},
+				"Cancel": function() {
+					$(this).dialog("close");
+				}
+			},
+			close: function() {
+				// don't really need to do anything.
+			}
+		});
+		$("button#chr-button-shrink").click(function() {
+			$("div#form-modal").dialog("open");
+		});
+		// This is to compensate for the fact that we're
+		//  serializing the form to send it.
+		// If we don't do this, the modal will be outside
+		//  of the form, and hence won't submit, ending
+		//  in some nasty 400 Bad Request replies, etc.
+		$('div[role="dialog"]').appendTo("form#shrink-url");
+	});
+</script>
+{% endblock %}
+{% block title %}chr{% endblock %}
+{% block content %}
+<h1 class="chr-header">chr url shortener</h1>
+<noscript>
+	<span class="chr-noscript"><b>Sorry, chr requires JavaScript.<b></span>
+</noscript>
+<form method="POST" id="shrink-url" action="{{ url_for('submit') }}">
+<input name="chr_text_long" type="text" class="chr-text-long"/>
+<input name="chr_text_short" type="text" class="chr-text-short" maxlength="32"/> <div class="chr-text-short-sub">(optional custom url)</div>
+<button name="chr_button_shrink" type="button" id="chr-button-shrink" class="chr-button-shrink">Shrink!</button>
+<div id="form-modal" style="display: none;"><!--Hidden until it's turned into a modal. This makes it cleaner.-->
+	<p>
+		Sorry, but we require this captcha to prevent spam.<br />
+		If you know a better way, send me a tweet, <a href="https://twitter.com/PicBakon">@PicBakon</a>
+	</p>
+	<div id="recaptcha-goes-here"></div>
+</div>
+</form>
+<div id="results">
+</div>
+{% endblock %}

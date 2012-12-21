@@ -11,10 +11,14 @@ flask_secret_key = 'SOMETHING!SECRET@AND#HARD$TO%GUESS'
 salt_password = 'SOMETHING!UNIQUE@AND#HARD$TO%GUESS^OR&ELSE'
 
 # Absolute directory for logging.
-log_dir = '/path/to/logs'
+log_dir = "/path/to/logs"
 
 # This has to be absolute or sqlite will complain.
-sql_path = '/path/to/chr.db'
+sql_path = "/path/to/chr.db"
+
+# reCAPTCHA settings.
+captcha_public_key = "YOUR_PUBLIC_API_KEY"
+captcha_private_key = "YOUR_PRIVATE_API_KEY"
 
 # API stuff, for when we finish this.
 api_enabled = False
