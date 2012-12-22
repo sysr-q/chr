@@ -15,3 +15,7 @@ def sql():
 		sql().where('id', 1).get('table')
 	"""
 	return pysql_wrapper(db_type='sqlite', db_path=settings.sql_path)
+
+def revision():
+	# Change after modification, etc.
+	return 'r6'

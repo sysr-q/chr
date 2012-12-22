@@ -27,7 +27,9 @@ Notes
 Running
 ---
 1. Clone the repo.
-2. `python chrf.py` (for now)
+2. Edit the `settings.py` file, adding in required info etc.
+3. `python chrm.py start`
+`chrm.py` has other launch params, so just `python chrm.py --help` to check them out.
 
 Author
 ---

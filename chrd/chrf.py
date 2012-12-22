@@ -15,10 +15,9 @@ import chru
 import settings
 import logger
 import utility
+import daemon
 
-def revision():
-	# Change after modification, etc.
-	return 'r5'
+# revision() is in utility.py
 
 app = Flask(__name__)
 app.debug = settings.flask_debug
@@ -209,9 +208,9 @@ def check_sql():
 	import os
 	if os.path.isfile(settings.sql_path):
 		return
-	with open('schema/schema.sql', 'rb') as f:
+	with open('chrd/schema/schema.sql', 'rb') as f:
 		utility.sql()._cursor.executescript(f.read())
-	sl = chru.url_to_slug("https://github.com/PigBacon/chr")
+	sl = chru.url_to_slug("https://github.com/PigBacon/chr", slug=settings._CUSTOM_CHAR + "source")
 	if sl:
 		logger.info("Successfully setup SQL and added first redirect.")
 		logger.debug(sl)
