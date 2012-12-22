@@ -54,7 +54,7 @@ $(document).ready(function() {
 					flash(data.message, "error");
 					return;
 				}
-				var s1 = document.last_id++, s2 = document.last_id++;
+				var s1 = document.last_id++, s2 = document.last_id++, s3 = document.last_id++;
 				var $url = $('<div class="chr-result"></div>');
 				var $long_ = $('<div></div>')
 						.append('<h3>Long url</h3>')
@@ -62,13 +62,22 @@ $(document).ready(function() {
 				var $short_ = $('<div></div>')
 						.append('<h3>Short url</h3>')
 						.append('<input type="text" name="shorten-'+s2+'" class="chr-text-long shorten-'+s2+'" value="'+data.url+'" readonly="readonly" />');
+				var $delete_ = $('<div></div>')
+						.append('<h3>Delete url (SAVE THIS)</h3>')
+						.append('<input type="text" name="shorten-'+s3+'" class="chr-text-long shorten-'+s3+'" value="'+data.delete+'" readonly="readonly" />');
 				$url.append($long_, $short_);
+				if (data.delete != "") {
+					$url.append($delete_);
+				}
 				$url.appendTo($('#chr-results-group'));
 				shrink('.shorten-' + s1);
 				shrink('.shorten-' + s2);
+				if (data.delete != "") {
+					shrink('.shorten-' + s3);
+				}
 				$("input#chr-text-long").val("http://");
 				$("input#chr-text-short").val("");
-
+				$("input#chr-check-delete").attr('checked', false);
 				flash(data.message);
 			}
 		);

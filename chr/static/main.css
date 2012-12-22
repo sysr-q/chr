@@ -57,10 +57,24 @@ input[type="text"][class^="chr-"]:focus {
   border: 1px solid #CCCCCC;
 }
 
-.chr-text-short-sub {
-  vertical-align: middle;
+.chr-check-delete {
   height: 28px;
   display: inline-block; /* so it doesn't bump out .chr-button-shrink */
+}
+
+.chr-check-delete label {
+  display: block;
+  float: left;
+  padding-right: 10px;
+  white-space: nowrap;
+}
+
+.chr-check-delete input {
+  vertical-align: middle;
+}
+
+.chr-check-delete label span {
+  vertical-align: middle;
 }
 
 .chr-button-shrink {
@@ -260,6 +274,7 @@ a.no_hover:link, a.no_hover:hover, a.no_hover:visited, a.no_hover:active {
   -webkit-box-shadow-bottom: 0 0 5px#888;
   box-shadow-bottom: 0 0 5px #888;
   text-shadow: 2px 2px 2px #ccc;
+  z-index: 1000; /* Above everything! */
 }
 
 .flash-info {
@@ -280,7 +295,7 @@ a.no_hover:link, a.no_hover:hover, a.no_hover:visited, a.no_hover:active {
 }
 
 #credits {
-  position: absolute;
+  position: fixed;
   bottom: 0px;
   right: 0px;
 }

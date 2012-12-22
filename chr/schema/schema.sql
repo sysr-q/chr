@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS `redirects` (
 	`id` INTEGER PRIMARY KEY,
 	`long` TEXT NOT NULL,
 	`short` TEXT NOT NULL, -- Added afterwards. This is the base62 encoding for the row id.
+	`delete` varchar(64) NOT NULL, -- String to delete. /slug/delete/<`delete`>
 	`user` INTEGER NOT NULL DEFAULT '0' -- Which user made this? 0 means non-logged in.
 );
 
@@ -23,4 +24,4 @@ CREATE TABLE IF NOT EXISTS `clicks` (
 	`url` INTEGER NOT NULL,    -- id from redirect row
 	`ip` varchar(15) NOT NULL, -- raw ip in form of 'W{1,3}.X{1,3}.Y{1,3}.Z{1,3}'
 	`time` INTEGER NOT NULL    -- int(time.time()) of hit
-)
+);

@@ -38,6 +38,9 @@ validate_urls = True
 # set your regex to this: r'.*' (<-- horrible idea!)
 validate_regex = r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.!&()=:;?,-]*)\/?$'
 
+# Soft cap for URL length. So people can't waste space.
+# Besides, when is a URL ever *this* long?
+soft_url_cap = 512
 
 # Absolute directory for logging.
 log_dir = "/path/to/logs"
@@ -45,7 +48,6 @@ log_dir = "/path/to/logs"
 
 # This has to be absolute or sqlite will complain.
 sql_path = "/path/to/chr.db"
-
 
 # reCAPTCHA settings.
 captcha_public_key = "YOUR_PUBLIC_API_KEY"
@@ -65,3 +67,8 @@ api_enabled = False
 _SCHEMA_USERS = 'users'
 _SCHEMA_REDIRECTS = 'redirects'
 _SCHEMA_CLICKS = 'clicks'
+_SCHEMA_MAX_SLUG = 32 # soft limit, schema defines as TEXT.
+
+# Prefix for custom slugs.
+# If it's more than one character, you WILL break things.
+_CUSTOM_CHAR = '+'

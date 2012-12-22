@@ -18,8 +18,6 @@ function refresh_captcha() {
 }
 </script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('.static', filename='jquery.head.js') }}"></script>
-<script type="text/javascript" src="{{ url_for('.static', filename='jquery.xdomain.js') }}"></script>
 {% endblock %}
 {% block title %}chr{% endblock %}
 {% block content %}
@@ -29,7 +27,13 @@ function refresh_captcha() {
 </noscript>
 <form method="POST" id="shrink-url" action="{{ url_for('submit') }}">
 <input name="chr_text_long" type="text" id="chr-text-long" class="chr-text-long" value="http://"/>
-<input name="chr_text_short" type="text" id="chr-text-short" class="chr-text-short" maxlength="32"/> <div class="chr-text-short-sub">(optional custom url)</div>
+<input name="chr_text_short" type="text" id="chr-text-short" class="chr-text-short" maxlength="32" placeholder="custom url"/>
+<div class="chr-check-delete">
+	<label>
+		<input name="chr_check_delete" type="checkbox" id="chr-check-delete" class="chr-check-delete" value="yes" />
+		Deletable?
+	</label>
+</div>
 <button name="chr_button_shrink" type="button" id="chr-button-shrink" class="chr-button-shrink">Shrink!</button>
 <div id="form-modal" style="display: none;"><!--Hidden until it's turned into a modal. This makes it cleaner.-->
 	<p>

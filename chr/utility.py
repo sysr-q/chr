@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # chr's utility functions
+
 import settings
 from pysql_wrapper import pysql_wrapper
 

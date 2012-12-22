@@ -3,6 +3,13 @@ chr
 __chr__ is a python based url shortening service which uses sqlite and Flask.  
 We wanted to make a clean, simplistic url shortener, that wasn't written in a horrific language like PHP. What else but Python could come to mind?
 
+Features
+---
++ Can shorten several billion (yes!) unique urls to a less than 6 character slug.
++ Verifies the shrunk URLs are legitimate, to stop abuse.
++ Uses reCAPTCHA to stop spammers from using the service for evil, not good.
++ Slugs are the base62 representation of their ID, so they'll work in all browsers.
+
 Dependencies
 ---
 + [Python 2.7](http://python.org)
@@ -21,3 +28,11 @@ Running
 ---
 1. Clone the repo.
 2. `python chrf.py` (for now)
+
+Author
+---
++ [PigBacon](https://github.com/PigBacon)
+
+Contributors
+---
++ [hueypeard](https://github.com/hueypeard)
