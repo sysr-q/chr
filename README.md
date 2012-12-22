@@ -6,10 +6,11 @@ We wanted to make a clean, simplistic url shortener, that wasn't written in a ho
 Dependencies
 ---
 + [Python 2.7](http://python.org)
++ [python-requests](http://docs.python-requests.org/en/latest/) (`pip install requests`)
 + [Flask](http://flask.pocoo.org/) (`pip install flask`)
 + [Flask-KVSession](https://github.com/mbr/flask-kvsession) (`pip install flask-kvsession`)
 + [recaptcha-client](http://pypi.python.org/pypi/recaptcha-client) (`pip install recaptcha-client`)
-+ sqlite3 (part of python)
++ sqlite3 (part of a regular python install)
 
 Notes
 ---
