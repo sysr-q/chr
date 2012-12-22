@@ -18,7 +18,7 @@ import utility
 
 def revision():
 	# Change after modification, etc.
-	return 'r3'
+	return 'r5'
 
 app = Flask(__name__)
 app.debug = settings.flask_debug
@@ -27,8 +27,8 @@ app.secret_key = settings.flask_secret_key
 # List of used routes, so we can't use it as a slug.
 reserved = ('index', 'submit')
 
-@app.route("/")
 @app.route("/index")
+@app.route("/")
 def index():
 	return render_template('index.html', recaptcha_key=settings.captcha_public_key)
 
@@ -43,6 +43,22 @@ def redirect_slug(slug):
 	url = chru.url_from_slug(slug)
 	chru.add_hit(slug, request.remote_addr)
 	return redirect(url)
+
+@app.route("/<slug>/delete/<delete>")
+def delete_slug(slug, delete):
+	logger.debug("delete slug:", slug,
+				", valid:", chru.is_valid_slug(slug),
+				", id:", chru.slug_to_id(slug),
+				", exists:", chru.slug_exists(slug))
+	if not chru.is_valid_slug(slug) or not chru.slug_exists(slug):
+		return redirect(url_for('index'))
+	row = chru.slug_to_row(slug)
+	if delete != row['delete']:
+		return redirect(url_for('index'))
+	chru.delete_slug(slug)
+	logger.info("Successfully deleted", settings.flask_url.format(slug=row['short']))
+	flash("Successfully deleted {0}".format(settings.flask_url.format(slug=row['short'])), "success")
+	return redirect(url_for('index'))
 
 @app.route("/submit", methods=["GET"])
 def submit_get():
@@ -168,7 +184,7 @@ def submit():
 		custom_slug = settings._CUSTOM_CHAR + slug_
 
 
-	slug_, id_, delete_, url_, old_ = chru.url_to_slug(request.form['chr_text_long'], slug=custom_slug)
+	slug_, id_, delete_, url_, old_ = chru.url_to_slug(request.form['chr_text_long'], ip=request.remote_addr, slug=custom_slug)
 	delete_ = settings.flask_url.format(slug=slug_) + "/delete/" + delete_
 	delete_ = delete_ if 'chr_check_delete' in request.form \
 						and request.form['chr_check_delete'] == "yes" \

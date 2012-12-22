@@ -13,7 +13,7 @@ import utility
 # THE REAL DEAL (SRS)
 #--------------------
 
-def url_to_slug(url, slug=False):
+def url_to_slug(url, ip=False, slug=False):
 	"""Turns a URL into a shortened slug.
 		returns (slug, id, delete, url, old,) or False if failure.
 		Doesn't impose any character length limits,
@@ -27,7 +27,8 @@ def url_to_slug(url, slug=False):
 	data = {
 		"long": url,
 		"short": "",
-		"delete": make_delete_slug()
+		"delete": make_delete_slug(),
+		"ip": ip if ip else ""
 	}
 	sq = utility.sql()
 	row = sq.insert(settings._SCHEMA_REDIRECTS, data)
@@ -72,6 +73,15 @@ def id_to_slug(id):
 	if not isinstance(id, int):
 		raise ValueError('Wanted int, got ' + str(type(id)))
 	return base62.dehydrate(id)
+
+def slug_to_row(slug):
+	if not is_valid_slug(slug):
+		return False
+	if slug[0] == settings._CUSTOM_CHAR:
+		rows = utility.sql().where('short', slug).get(settings._SCHEMA_REDIRECTS)
+	else:
+		rows = utility.sql().where('id', slug_to_id(slug)).get(settings._SCHEMA_REDIRECTS)
+	return rows[0] if len(rows) == 1 else False
 
 #------------------
 # INFO
@@ -136,9 +146,6 @@ def add_hit(slug, ip, time=int(time.time())):
 	"""
 	if not is_valid_slug(slug):
 		return False
-	if not re.match(r'^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.' + \
-			'(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$', ip):
-		return False
 	id = slug_to_id(slug)
 	data = {
 		"url": id,
@@ -146,6 +153,14 @@ def add_hit(slug, ip, time=int(time.time())):
 		"time": time
 	}
 	return utility.sql().insert(settings._SCHEMA_CLICKS, data)
+
+def delete_slug(slug):
+	if not is_valid_slug(slug) or not slug_exists(slug):
+		return False
+	id = slug_to_id(slug)
+	rem_slug = utility.sql().where('id', id).delete(settings._SCHEMA_REDIRECTS)
+	rem_click = utility.sql().where('url', id).delete(settings._SCHEMA_CLICKS)
+	return rem_slug and rem_click
 
 #------------------
 # GENERATORS
