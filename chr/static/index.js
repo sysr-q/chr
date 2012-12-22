@@ -69,7 +69,7 @@ $(document).ready(function() {
 				$("input#chr-text-long").val("http://");
 				$("input#chr-text-short").val("");
 
-				flash("Successfully shrunk <b>" + data.given + "</b>!");
+				flash(data.message);
 			}
 		);
 		return false;
