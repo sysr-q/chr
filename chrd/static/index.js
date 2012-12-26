@@ -29,6 +29,16 @@ function flash(msg, category) {
 	}, 1000 * 2);
 }
 
+function refresh_captcha() {
+	Recaptcha.create(window.recaptcha_public_key,
+		"recaptcha-goes-here",
+		{
+			theme: "clean",
+			callback: function() {}
+		}
+	);
+}
+
 document.last_id = 0;
 document.last_err = 0;
 

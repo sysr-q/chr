@@ -6,10 +6,12 @@ from flask import Flask, render_template, session, abort, request, g
 from flask import redirect, url_for, flash, make_response, jsonify
 # recaptcha related
 from recaptcha.client import captcha
-# requests
+# requests for url validation
 import requests
 # python modules
 import re
+import time
+from datetime import datetime
 # chr modules
 import chru
 import settings
@@ -22,6 +24,9 @@ import daemon
 app = Flask(__name__)
 app.debug = settings.flask_debug
 app.secret_key = settings.flask_secret_key
+app.jinja_env.globals.update(sorted=sorted)
+app.jinja_env.globals.update(len=len)
+app.jinja_env.globals.update(date_strip_day=utility.date_strip_day)
 
 # List of used routes, so we can't use it as a slug.
 reserved = ('index', 'submit')
@@ -32,7 +37,7 @@ def index():
 	return render_template('index.html', recaptcha_key=settings.captcha_public_key)
 
 @app.route("/<slug>")
-def redirect_slug(slug):
+def slug_redirect(slug):
 	logger.debug("slug:", slug, 
 				", valid:", chru.is_valid_slug(slug),
 				", id:", chru.slug_to_id(slug),
@@ -40,11 +45,11 @@ def redirect_slug(slug):
 	if not chru.is_valid_slug(slug) or not chru.slug_exists(slug):
 		return redirect(url_for('index'))
 	url = chru.url_from_slug(slug)
-	chru.add_hit(slug, request.remote_addr)
+	chru.add_hit(slug, request.remote_addr, request.user_agent)
 	return redirect(url)
 
 @app.route("/<slug>/delete/<delete>")
-def delete_slug(slug, delete):
+def slug_delete(slug, delete):
 	logger.debug("delete slug:", slug,
 				", valid:", chru.is_valid_slug(slug),
 				", id:", chru.slug_to_id(slug),
@@ -58,6 +63,76 @@ def delete_slug(slug, delete):
 	logger.info("Successfully deleted", settings.flask_url.format(slug=row['short']))
 	flash("Successfully deleted {0}".format(settings.flask_url.format(slug=row['short'])), "success")
 	return redirect(url_for('index'))
+
+@app.route("/<slug>/stats")
+def slug_stats(slug):
+	if not chru.is_valid_slug(slug) or not chru.slug_exists(slug):
+		return redirect(url_for('index'))
+	row = chru.slug_to_row(slug)
+	clicks = utility.sql().where('url', row['id']).get('clicks')
+
+	click_info = {
+		"platforms": {"unknown": 0},
+		"browsers": {"unknown": 0},
+		"pd": {}, # clicks per day
+	}
+	month_ago = int(time.time()) - (60 * 60 * 24 * 30) # Last 30 days
+	month_ago_copy = month_ago
+	for x in xrange(1, 31):
+		# Prepopulate the per day clicks dictionary.
+		# This makes life much much easier for everything.
+		month_ago_copy += (60 * 60 * 24) # one day
+		strf = str(datetime.fromtimestamp(month_ago_copy).strftime('%m/%d'))
+		click_info['pd'][strf] = 0
+
+	for click in clicks:
+		if click['time'] > month_ago:
+			# If the click is less than a month old
+			strf = str(datetime.fromtimestamp(click['time']).strftime('%m/%d'))
+			click_info['pd'][strf] += 1
+
+		if len(click['agent']) == 0 \
+				or len(click['agent_platform']) == 0 \
+				or len(click['agent_browser']) == 0:
+			click_info['platforms']['unknown'] += 1
+			click_info['browsers']['unknown'] += 1
+			continue
+
+		platform_ = click['agent_platform']
+		browser_ = click['agent_browser']
+		if not platform_ in click_info['platforms']:
+			click_info['platforms'][platform_] = 1
+		else:
+			click_info['platforms'][platform_] += 1
+		if not browser_ in click_info['browsers']:
+			click_info['browsers'][browser_] = 1
+		else:
+			click_info['browsers'][browser_] += 1
+	print click_info
+
+	# Yes, formatting in stuff without escaping it, I know, I'm bad!
+	# But these are *safe* variables, we know they're good in advance.
+	unique = utility.sql().query('SELECT COUNT(DISTINCT `{0}`) AS "{1}" FROM `{2}`'.format('ip', 'unq', settings._SCHEMA_CLICKS))
+	unique = unique[0]['unq']
+	rpt = len(clicks) - unique
+	hits = {
+		"all": len(clicks),
+		"unique": unique,
+		"return": rpt,
+		"ratio": str(round(float(unique) / float(len(clicks)), 2))[2:] # (unique / all)% of visitors only come once.
+	}
+
+	stats = {
+		"hits": utility.Struct(**hits),
+		"clicks": utility.Struct(**click_info),
+		"long": row['long'],
+		"long_clip": row['long'],
+		"short": row['short'],
+		"short_url": settings.flask_url.format(slug=row['short'])
+	}
+	if len(row['long']) > 30:
+		stats['long_clip'] = row['long'][:30] + '...'
+	return render_template('stats.html', stats=utility.Struct(**stats))
 
 @app.route("/submit", methods=["GET"])
 def submit_get():

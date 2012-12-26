@@ -12,7 +12,7 @@ flask_port = 8080
 flask_base = "/"
 # Your shrunk URL formats. Use {slug} for
 # where the url slug goes.
-flask_url = "http://chng.me/{slug}"
+flask_url = "http://change.this/{slug}"
 flask_secret_key = 'SOMETHING!SECRET@AND#HARD$TO%GUESS'
 
 # Set this once, make it long and hard, and never change it.
@@ -34,8 +34,6 @@ validate_urls = True
 	# http://this.is.an.example.net/test.php
 	# https://some-stupid.domain.co.nz/blah/is_a/word!
 	# <stupidly long google images result that people always link>
-# If you really don't want to bother validating input,
-# set your regex to this: r'.*' (<-- horrible idea!)
 validate_regex = r'^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.!&()=:;?,-]*)\/?$'
 
 # Soft cap for URL length. So people can't waste space.

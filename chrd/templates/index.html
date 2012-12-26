@@ -7,15 +7,7 @@
 		which is given from the render_template.
 	#}-->
 <script type="text/javascript">
-function refresh_captcha() {
-	Recaptcha.create("{{ recaptcha_key }}",
-		"recaptcha-goes-here",
-		{
-			theme: "clean",
-			callback: function() {}
-		}
-	);
-}
+window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }}";
 </script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}

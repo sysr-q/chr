@@ -18,4 +18,13 @@ def sql():
 
 def revision():
 	# Change after modification, etc.
-	return 'r6'
+	return 'r7'
+
+class Struct:
+	def __init__(self, **entries): 
+		self.__dict__.update(entries)
+
+def date_strip_day(date_):
+	if not '/' in date_:
+		return date_
+	return date_.split('/')[1]

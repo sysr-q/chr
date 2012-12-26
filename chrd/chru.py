@@ -140,7 +140,7 @@ def url_from_slug(slug):
 # MODIFICATION
 #------------------
 
-def add_hit(slug, ip, time=int(time.time())):
+def add_hit(slug, ip, ua, time=int(time.time())):
 	"""Add a hit relating to the given slug.
 		Converts slug -> id before adding.
 	"""
@@ -150,7 +150,12 @@ def add_hit(slug, ip, time=int(time.time())):
 	data = {
 		"url": id,
 		"ip": ip,
-		"time": time
+		"time": time,
+		"agent": ua.string if not ua.string == None else "",
+		"agent_platform": ua.platform if not ua.platform == None else "",
+		"agent_browser": ua.browser if not ua.browser == None else "",
+		"agent_version": ua.version if not ua.version == None else "",
+		"agent_language": ua.language if not ua.language == None else ""
 	}
 	return utility.sql().insert(settings._SCHEMA_CLICKS, data)
 

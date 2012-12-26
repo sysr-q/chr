@@ -24,5 +24,10 @@ CREATE TABLE IF NOT EXISTS `clicks` (
 	`id` INTEGER PRIMARY KEY,
 	`url` INTEGER NOT NULL,    -- id from redirect row
 	`ip` varchar(15) NOT NULL, -- raw ip in form of 'W{1,3}.X{1,3}.Y{1,3}.Z{1,3}'
-	`time` INTEGER NOT NULL    -- int(time.time()) of hit
+	`time` INTEGER NOT NULL,   -- int(time.time()) of hit
+	`agent` TEXT NOT NULL,     -- Their user agent. Trimmed to a max of 256
+	`agent_platform` TEXT NOT NULL, -- These are all based off of the
+	`agent_browser` TEXT NOT NULL,  -- flask request.user_agent variable.
+	`agent_version` TEXT NOT NULL,  -- It has the platform (Win, Mac), browser (Firefox, Safari)
+	`agent_language` TEXT NOT NULL  -- aswell as version and language.
 );
