@@ -51,5 +51,5 @@ Author
 
 Contributors
 ---
-+ [hueypeard](https://github.com/hueypeard)
++ huey
 + [Chris Leonello](http://www.jqplot.com) (made jqPlot)
