@@ -9,6 +9,7 @@ Features
 + Verifies the shrunk URLs are legitimate, to stop abuse.
 + Uses reCAPTCHA to stop spammers from using the service for evil, not good.
 + Slugs are the base62 representation of their ID, so they'll work in all browsers.
++ A live chr is located at [chr.so](http://chr.so)
 
 Dependencies
 ---
@@ -46,7 +47,7 @@ Todo
 
 Author
 ---
-+ [PigBacon](https://github.com/PigBacon)
++ [plausibility](https://github.com/plausibility)
 
 Contributors
 ---

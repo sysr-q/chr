@@ -2,10 +2,6 @@
 {% block head %}{{ super() }}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
-<!--{#
-		We have to put this here because it's using the recaptcha_key
-		which is given from the render_template.
-	#}-->
 <script type="text/javascript">
 window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }}";
 </script>
