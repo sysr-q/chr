@@ -43,6 +43,10 @@ document.last_id = 0;
 document.last_err = 0;
 
 $(document).ready(function() {
+	$(".chr-part").each(function() {
+		$(this).removeAttr("disabled");
+	});
+
 	refresh_captcha();
 	$("input#chr-text-long").keyup(function() {
 		if ($(this).val() != "") {

@@ -1,16 +1,19 @@
 #!/usr/bin/env python
 
-#
-# Converts any integer into a base [BASE] number. I have chosen 62
-# as it is meant to represent the integers using all the alphanumeric
-# characters, [no special characters] = {0..9}, {A..Z}, {a..z}
-#
-# I plan on using this to shorten the representation of possibly long ids,
-# a la url shortenters
-#
-# saturate()  takes the base 62 key, as a string, and turns it back into an integer
-# dehydrate() takes an integer and turns it into the base 62 string
-#
+"""
+    Note: Taken from the public domain (namely: Stack Overflow), so this
+    isn't my documentation.
+
+    Converts any integer into a base [BASE] number. I have chosen 62
+    as it is meant to represent the integers using all the alphanumeric
+    characters, [no special characters] = {0..9}, {A..Z}, {a..z}
+ 
+    I plan on using this to shorten the representation of possibly long ids,
+    a la url shortenters
+ 
+    saturate()  takes the base 62 key, as a string, and turns it back into an integer
+    dehydrate() takes an integer and turns it into the base 62 string
+"""
 import math
 import sys
 
