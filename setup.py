@@ -22,6 +22,7 @@ kw = {
     "packages": [
         'chru',
         'chru.api',
+        'chru.api.web',
         'chru.web',
         'chru.utility',
     ],
