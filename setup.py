@@ -19,7 +19,13 @@ kw = {
     "author": "plausibility",
     "author_email": "chris@gibsonsec.org",
     "license": "MIT",
-    "packages": ['chru'],
+    "packages": [
+        'chru',
+        'chru.api',
+        'chru.web',
+        'chru.utility',
+    ],
+    "include_package_data": True,
     "install_requires": [
         "requests",
         "flask",

@@ -7,6 +7,7 @@
     These functions depend on the SQL database, so without it they're useless.
 """
 
+from datetime import datetime
 import time
 import re
 import logging
@@ -15,6 +16,102 @@ import chru.utility as utility
 import chru.utility.base62 as base62
 import chru.web as web
 
+def pull_stats(slug, url_for):
+    """ Cluster together the statistics for a
+        given slug. This pulls out information
+        such as:
+
+        - Number of clicks
+        - Info about the clicks
+          - Browser
+          - Platform
+          - Clicks per day
+        - Unique/return clicks
+
+        :param slug: the slug we're gathering statistics for
+        :type slug: str
+        :param url_for: the url_for() function we can use to expand urls
+        :type url_for: def
+        :return: statistics about a url
+        :rtype: dict
+    """
+    row = to_row(slug)
+    clicks = utility.funcs.sql().where("url", row["id"]).get(web.s._schema["clicks"])
+
+    click_info = {
+        "platforms": {"unknown": 0},
+        "browsers": {"unknown": 0},
+        "pd": {} # clicks per day
+    }
+    month_ago = int(time.time()) - (60 * 60 * 24 * 30) # Last 30 days
+    month_ago_copy = month_ago
+
+    for x in xrange(1, 31):
+        # Pre-populate the per day clicks dictionary.
+        # This makes life much much easier for everything.
+        month_ago_copy += (60 * 60 * 24) # one day
+        strf = str(datetime.fromtimestamp(month_ago_copy).strftime("%m/%d"))
+        click_info["pd"][strf] = 0
+
+    for click in clicks:
+        if click["time"] > month_ago:
+            # If the click is less than a month old
+            strf = str(datetime.fromtimestamp(click["time"]).strftime("%m/%d"))
+            click_info["pd"][strf] += 1
+
+        if len(click["agent"]) == 0 \
+                or len(click["agent_platform"]) == 0 \
+                or len(click["agent_browser"]) == 0:
+            click_info["platforms"]["unknown"] += 1
+            click_info["browsers"]["unknown"] += 1
+            continue
+
+        platform_ = click["agent_platform"]
+        browser_ = click["agent_browser"]
+
+        if not platform_ in click_info["platforms"]:
+            click_info["platforms"][platform_] = 1
+        else:
+            click_info["platforms"][platform_] += 1
+
+        if not browser_ in click_info["browsers"]:
+            click_info["browsers"][browser_] = 1
+        else:
+            click_info["browsers"][browser_] += 1
+
+    # Formatting in directly without escapes, how horrible am I!
+    # But these are known to be *safe*, as they're set by us.
+    unique = utility.funcs.sql().query("SELECT COUNT(DISTINCT `{0}`) AS \"{1}\" FROM `{2}`".format("ip", "unq", web.s._schema["clicks"]))
+    unique = unique[0]["unq"]
+
+    rpt = len(clicks) - unique
+    if len(clicks) == 0:
+        rpt = 0
+
+    f_unique = unique
+    f_clicks = len(clicks) if len(clicks) != 0 else 1
+
+    hits = {
+        "all": len(clicks),
+        "unique": unique,
+        "return": rpt,
+        # (unique / all)% of visits only come once
+        "ratio": str(round(float(f_unique) / float(f_clicks), 2))[2:]
+    }
+
+    stats = {
+        "hits": hits,
+        "clicks": click_info,
+        "long": row["long"],
+        "long_clip": row["long"],
+        "short": row["short"],
+        "short_url": url_for("slug_redirect", slug=row["short"], _external=True)
+    }
+
+    if len(row["long"]) > 30:
+        stats["long_clip"] = row["long"][:30] + "..."
+
+    return stats
 
 def url_to_slug(url, ip=False, slug=False):
     """ Shrinks a URL to the slug equivalent.
@@ -31,7 +128,7 @@ def url_to_slug(url, ip=False, slug=False):
         :return: tuple with (shortened slug, row id, deletion key, long url, old or new url)
         :rtype: tuple
     """
-    old_slug = utility.funcs.sql().where("long", url).get(web.s._SCHEMA_REDIRECTS)
+    old_slug = utility.funcs.sql().where("long", url).get(web.s._schema["redirects"])
     if len(old_slug) > 0:
         # url already shortened, give that.
         old_slug = old_slug[0]
@@ -43,7 +140,7 @@ def url_to_slug(url, ip=False, slug=False):
         "ip": ip if ip else ""
     }
     sq = utility.funcs.sql()
-    row = sq.insert(web.s._SCHEMA_REDIRECTS, data)
+    row = sq.insert(web.s._schema["redirects"], data)
     if not row:
         logging.debug("Unable to insert: %s", data)
         return False
@@ -54,8 +151,8 @@ def url_to_slug(url, ip=False, slug=False):
     update = {
         "short": slug
     }
-    if utility.funcs.sql().where("id", id).update(web.s._SCHEMA_REDIRECTS, update):
-        slug = utility.funcs.sql().where("id", id).get(web.s._SCHEMA_REDIRECTS)[0]
+    if utility.funcs.sql().where("id", id).update(web.s._schema["redirects"], update):
+        slug = utility.funcs.sql().where("id", id).get(web.s._schema["redirects"])[0]
         return (slug["short"], slug["id"], slug["delete"], slug["long"], False,)
     else:
         return False
@@ -73,8 +170,8 @@ def slug_to_id(slug):
         :rtype: int
         :raises: ValueError
     """
-    if slug[:len(web.s._CUSTOM_CHAR)] == web.s._CUSTOM_CHAR:
-        rows = utility.funcs.sql().where("short", slug).get(web.s._SCHEMA_REDIRECTS)
+    if slug[:len(web.s._schema["char"])] == web.s._schema["char"]:
+        rows = utility.funcs.sql().where("short", slug).get(web.s._schema["redirects"])
         if len(rows) != 1:
             return False
         return rows[0]["id"]
@@ -111,10 +208,10 @@ def to_row(slug):
     if not is_valid(slug):
         return False
 
-    if slug[:len(web.s._CUSTOM_CHAR)] == web.s._CUSTOM_CHAR:
-        rows = utility.funcs.sql().where("short", slug).get(web.s._SCHEMA_REDIRECTS)
+    if slug[:len(web.s._schema["char"])] == web.s._schema["char"]:
+        rows = utility.funcs.sql().where("short", slug).get(web.s._schema["redirects"])
     else:
-        rows = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._SCHEMA_REDIRECTS)
+        rows = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._schema["redirects"])
     return rows[0] if len(rows) == 1 else False
 
 ### info
@@ -132,7 +229,7 @@ def hits(slug):
     if not is_valid(slug):
         return 0
     id = slug_to_id(slug)
-    rows = utility.funcs.sql().where("url", id).get(web.s._SCHEMA_CLICKS)
+    rows = utility.funcs.sql().where("url", id).get(web.s._schema["clicks"])
     return len(rows)
 
 def exists(slug):
@@ -146,10 +243,10 @@ def exists(slug):
     """
     if not is_valid(slug):
         return False
-    if slug[:len(web.s._CUSTOM_CHAR)] == web.s._CUSTOM_CHAR:
-        rows = utility.funcs.sql().where("short", slug).get(web.s._SCHEMA_REDIRECTS)
+    if slug[:len(web.s._schema["char"])] == web.s._schema["char"]:
+        rows = utility.funcs.sql().where("short", slug).get(web.s._schema["redirects"])
     else:
-        rows = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._SCHEMA_REDIRECTS)
+        rows = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._schema["redirects"])
     return len(rows) == 1
 
 def is_valid(slug):
@@ -161,7 +258,7 @@ def is_valid(slug):
         :return: whether the slug is valid
         :rtype: bool
     """
-    if slug[:len(web.s._CUSTOM_CHAR)] == web.s._CUSTOM_CHAR:
+    if slug[:len(web.s._schema["char"])] == web.s._schema["char"]:
         return True
 
     try:
@@ -184,10 +281,10 @@ def url_from_slug(slug):
         return False
     if not exists(slug):
         return False
-    if slug[:len(web.s._CUSTOM_CHAR)] == web.s._CUSTOM_CHAR:
-        row = utility.funcs.sql().where("short", slug).get(web.s._SCHEMA_REDIRECTS)[0]
+    if slug[:len(web.s._schema["char"])] == web.s._schema["char"]:
+        row = utility.funcs.sql().where("short", slug).get(web.s._schema["redirects"])[0]
     else:
-        row = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._SCHEMA_REDIRECTS)[0]
+        row = utility.funcs.sql().where("id", slug_to_id(slug)).get(web.s._schema["redirects"])[0]
     return row["long"]
 
 ### modification
@@ -223,7 +320,7 @@ def add_hit(slug, ip, ua, time_=None):
         "agent_version": ua.version if not ua.version == None else "",
         "agent_language": ua.language if not ua.language == None else ""
     }
-    return utility.funcs.sql().insert(web.s._SCHEMA_CLICKS, data)
+    return utility.funcs.sql().insert(web.s._schema["clicks"], data)
 
 def delete(slug):
     """ Delete the given slug entirely from the database.
@@ -237,9 +334,11 @@ def delete(slug):
     if not is_valid(slug) or not exists(slug):
         return False
     id = slug_to_id(slug)
-    rem_slug = utility.funcs.sql().where("id", id).delete(web.s._SCHEMA_REDIRECTS)
-    rem_click = utility.funcs.sql().where("url", id).delete(web.s._SCHEMA_CLICKS)
-    return rem_slug and rem_click
+    rem_slug = utility.funcs.sql().where("id", id).delete(web.s._schema["redirects"])
+    rem_click = utility.funcs.sql().where("url", id).delete(web.s._schema["clicks"])
+    if not rem_slug or not rem_click:
+        logging.debug("Unable to fully delete: %s, rem_slug: %s, rem_click: %s", slug, rem_slug, rem_click)
+    return rem_slug
 
 ### generators
 

@@ -13,11 +13,12 @@ Creating the file is easy, you simply call ``chru --make-config``, and pipe it i
 
 What's inside of the file and what does it mean? Let's delve deep into the inner configuration file of chr.
 
-``debug``
-  This does absolutely nothing, and is not used. It's actually overwritten by chr at runtime;
-  it's mainly there so I don't go mad and forget about the debugging stuff.
+``sql_path``
+  This is an **absolute** path to the sqlite3 database file we're going to store stuff in.
 
-  This should be a ``boolean``, default: ``false``
+  Keep it somewhere which makes sense, ``/var/chr/chr.db`` or something.
+
+  This should be a ``string``, default: ``/path/to/chr.db``
 
 ``soft_url_cap``
   This is the limit for URLs that we'll shorten. There is no hard limit (the database will store any amount of text),
@@ -37,13 +38,17 @@ What's inside of the file and what does it mean? Let's delve deep into the inner
   This should be an ``int``, default: ``8080``
 
 ``flask_base``
-  **NOT IMPLEMENTED**
+  .. note::
+    This hasn't been implemented yet.
 
   In theory, this should be the URL base that Flask binds to. The Blueprint, if you're familiar with Flask.
 
   This should be a ``string``, default: ``/``
 
 ``flask_url``
+  .. deprecated:: 2.1.0
+    ``web.s.flask_url.format(...)`` was replaced by routing's ``url_for(..., _external=True)``.
+
   This is the displayed URL of the app. This is the output when new URLs are shrunk, we access stats about one, etc.
 
   It uses the formatting piece ``{slug}`` to represent the shortened URL slug.
@@ -54,11 +59,21 @@ What's inside of the file and what does it mean? Let's delve deep into the inner
   This should be a ``string``, default: ``http://change.this/{slug}``
 
 ``flask_secret_key``
-  **KEEP THIS SECRET**
+  .. warning::
+    Keep this a secret. If it falls into the wrong hands, they could use it
+    to execute arbitrary code in the app, since Flask serializes cookies (wtf?).
 
   The secret key that Flask uses to encrypt all cookies and anything related to Flask.
 
   This should be a long, random ``string``, default: ``UNIQUE_KEY``
+
+``reserved``
+  .. versionadded:: 2.1.0
+
+  This is a square bracket, string and comma delimited list of reserved keywords,
+  which you can disallow for usage as a custom URL.
+
+  This should be a ``list`` (``["foo", "bar", "baz"]``), default: ``["lots", "of", "naughty", "words"]``.
 
 ``captcha_public_key``
   This is your reCAPTCHA API public key. You can get one from the `reCAPTCHA site <https://recaptcha.com>`_.
@@ -66,16 +81,22 @@ What's inside of the file and what does it mean? Let's delve deep into the inner
   This should be a ``string``, default: ``YOUR_PUBLIC_API_KEY``
 
 ``captcha_private_key``
-  **KEEP THIS SECRET**
+  .. warning::
+    Keep this a secret. If it falls into the wrong hands, they could possibly bypass captchas. Who knows!
+    If you think this has been compromised, generate a new pair.
 
   This is similar to ``captcha_public_key``, but it is the secret key used to verify captchas.
-  If you think this has been compromised, generate a new pair and change them.
 
   This should be a ``string``, default: ``YOUR_PRIVATE_API_KEY``
 
 ``salt_password``
-  **KEEP THIS SECRET**,
-  **NOT IMPLEMENTED**
+  .. note::
+    This hasn't been implemented yet.
+
+  .. warning::
+    Keep this a secret. We don't want people to be able to try and crack your password hashes.
+
+    If you ever change this once set, it could cause all sorts of hell to users.
 
   When/if user accounts are added, this will be used to salt the password strings;
   hopefully keeping them secure.
@@ -115,14 +136,19 @@ What's inside of the file and what does it mean? Let's delve deep into the inner
   This should be a ``boolean``, default: ``true``
 
 ``api_enabled``
-  **NOT IMPLEMENTED**
+  .. versionchanged:: 2.1.0
 
-  When/if an API is implemented, this will decree whether or not it is accessible to the outside world.
+  This decides whether or not your chr API is available to the outside world.
+
+  The API provides a nice developer interface for shortening URLs.
 
   This should be a ``boolean``, default: ``false``
 
 ``_`` *(underscore variables)*
-  **DO NOT TOUCH THESE**
+  .. warning::
+    If you touch these, it could cause instability in the app.
+
+    For safety, don't touch them at all.
 
   These are used by chr's internal structures. Modifying these will **definitely** lead to problems. Don't do it!
 

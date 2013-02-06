@@ -63,13 +63,21 @@ $(document).ready(function() {
 			$(this).attr('action'),
 			$(this).serialize(),
 			function(data, textStatus, jqXHR) {
-				console.log(data.error + " " + data.message + " " + data.given + " " + data.url);
 				if (data.error == "true") {
 					flash(data.message, "error");
 					return;
 				}
 				var s1 = document.last_id++, s2 = document.last_id++, s3 = document.last_id++;
 				var $url = $('<div class="chr-result"></div>');
+
+				var $close_ = $('<span class="close-btn right">&#10006;</span>');
+
+				$close_.click(function() {
+					$(this).parent().slideUp(function() {
+						$(this).remove();
+					});
+				});
+
 				var $long_ = $('<div></div>')
 						.append('<h3>Long url</h3>')
 						.append('<input type="text" name="shorten-'+s1+'" class="chr-text-long shorten-'+s1+'" value="'+data.given+'" disabled="disabled" />');
@@ -79,7 +87,7 @@ $(document).ready(function() {
 				var $delete_ = $('<div></div>')
 						.append('<h3>Delete url (SAVE THIS)</h3>')
 						.append('<input type="text" name="shorten-'+s3+'" class="chr-text-long shorten-'+s3+'" value="'+data.delete+'" readonly="readonly" />');
-				$url.append($long_, $short_);
+				$url.append($close_, $long_, $short_);
 				if (data.delete != "") {
 					$url.append($delete_);
 				}
@@ -122,9 +130,11 @@ $(document).ready(function() {
 			// don't really need to do anything.
 		}
 	});
+
 	$("button#chr-button-shrink").click(function() {
 		$("div#form-modal").dialog("open");
 	});
+
 	// This is to compensate for the fact that we're
 	//  serializing the form to send it.
 	// If we don't do this, the modal will be outside

@@ -37,6 +37,10 @@ input[type="text"][class^="chr-"]:focus {
   border: 1px solid #CCCCCC;
 }
 
+.close-btn {
+  cursor: pointer;
+}
+
 .shorten {
   width: 70%;
 }

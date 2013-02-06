@@ -12,6 +12,38 @@ import chru.web as web
 import requests
 import re
 import logging
+from urllib import unquote as urllib_unquote
+
+from flask import request, url_for as flask_url_for
+
+def url_for(endpoint, **kwargs):
+    """ Sneaky hack allows us to easily unescape
+        the HTML in _external url_for calls, since
+        they're only used to display slug_redirect().
+    """
+    if "_external" in kwargs:
+        return urllib_unquote(flask_url_for(endpoint, **kwargs))
+    else:
+        return flask_url_for(endpoint, **kwargs)
+
+def real_ip(ip_header="X-Real-IP"):
+    """ This checks whether or not the ip_header is set,
+        which it is for chr.so, because it's run behind
+        nginx and cloudflare.
+
+        You'll have to figure out how to set that header
+        if and only if you're running behind cloudflare
+        for your particular httpd, I can't help, sorry.
+
+        This is done because for some reason Flask makes it
+        really fucking hard to just change where it pulls the
+        remote address from, so we have to resort to workarounds.
+    """
+    if request.headers.getlist(ip_header):
+        ip = request.headers.getlist(ip_header)[0]
+    else:
+        ip = request.remote_addr
+    return ip
 
 def sql():
     """ Opens an sqlite connection, returning it for usage.
@@ -25,20 +57,25 @@ def date_strip_day(date_):
         return date_
     return date_.split("/")[1]
 
-def verify_sql():
+def verify_sql(force=False):
     """ Ensure the database file is made, and if not,
         create it and populate it with the schema.
+
+        :param force: should we force table creation?
+        :type force: bool
     """
     import os
-    if os.path.isfile(web.s.sql_path):
+    if os.path.isfile(web.s.sql_path) and not force:
         return True
     with sql() as s:
         s.wrapper.cursor.executescript(web.schema)
-    add_first = web.slug.url_to_slug("https://github.com/plausibility/chr", slug=web.s._CUSTOM_CHAR + "source")
-    if add_first:
-        return True
+        s.wrapper.dbc.commit()
+
+    if not force:
+        add_first = web.slug.url_to_slug("https://github.com/plausibility/chr", slug=web.s._schema["char"] + "source")
+        return add_first
     else:
-        return False
+        return True
 
 def constant(f):
     """ Simple decorator for const class variables.

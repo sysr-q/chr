@@ -6,4 +6,4 @@
     run in the background with no human interaction,
     and it can fly like a bird -- or is that Super Man?
 """
-from .version import __version__, __supported__
+from .version import __version__, __supported__, codes

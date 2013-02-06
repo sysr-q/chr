@@ -20,13 +20,15 @@ class daemon(mattdaemon.daemon):
         """
         import web
         import web.routes
-        web.routes.set_app(
+        setup = web.routes.set_app(
             debug=kwargs.get("debug"),
             settings_file=kwargs.get("settings")[0],
             log_file=kwargs.get("log"),
-            __supported__=__supported__
+            __supported__=__supported__,
+            update_schema=kwargs.get("update_schema")
         )
-        web.routes.app.run(host=web.s.flask_host, port=web.s.flask_port)
+        if setup:
+            web.routes.app.run(host=web.s.flask_host, port=web.s.flask_port)
 
 def main():
     """ This method is in charge of everything
@@ -43,7 +45,7 @@ def main():
     parser = argparse.ArgumentParser(description="Take control of the chr url shortener.")
     parser.add_argument("action",
                         help="Action to take on the server",
-                        choices=["start", "stop", "restart", "status"],
+                        choices=["start", "stop", "restart", "status", "-"],
                         metavar="action")
 
     parser.add_argument("-v", "--version",
@@ -79,7 +81,38 @@ def main():
     parser.add_argument("--make-config",
                         help="Print the settings.json file skeleton to stdout",
                         action="store_true")
+
+    parser.add_argument("--update-schema",
+                        help="Forcefully update the database schema, creating missing tables",
+                        action="store_true")
+
+    parser.add_argument("--api-manage",
+                        help="Jump into the CLI API key manager",
+                        action="store_true")
+
+    parser.add_argument("--api-dump",
+                        help="Dump the API keys as a JSON dict to stdout",
+                        action="store_true")
+
     args = parser.parse_args()
+
+    if args.api_manage:
+        if not args.settings:
+            print "You must pass in the settings.json file location (see --help for info)"
+            return
+        import api.manager
+        cli = api.manager.cli(args.settings[0])
+        cli.main()
+        return
+
+    if args.api_dump:
+        if not args.settings:
+            print "You must pass in the settings.json file location (see --help for info)"
+            return
+        import api.manager
+        dump = api.manager.dump(args.settings[0])
+        dump.dump()
+        return
 
     daem_args = {
         "stdin": "/dev/null",
@@ -95,13 +128,13 @@ def main():
     daem = daemon(args.pid, daemonize=not args.no_daemon, **daem_args)
 
     if args.action == "start":
-        if args.settings == None:
+        if not args.settings:
             print "You must pass in the settings.json file location (see --help for info)"
             return
 
         # -n flag given? -- enable debugging
         debug = args.no_daemon
-        daem.start(debug=debug, log=args.log, settings=args.settings)
+        daem.start(debug=debug, log=args.log, settings=args.settings, update_schema=args.update_schema)
     elif args.action == "stop":
         daem.stop()
     elif args.action == "restart":
@@ -112,6 +145,8 @@ def main():
         else:
             print "chr not running! D:"
         return
+    elif args.action == "-":
+        pass
 
 
 if __name__ == "__main__":

@@ -39,19 +39,18 @@ CREATE TABLE IF NOT EXISTS `clicks` (
     `agent_language` TEXT NOT NULL  -- aswell as version and language.
 );
 
--- NOT IMPLEMENTED, API keys.
 CREATE TABLE IF NOT EXISTS `api` (
     `id` INTEGER PRIMARY KEY,
-    `key` TEXT NOT NULL,   -- The API key.
-    `email` TEXT NOT NULL, -- The email of the key owner.
-    `name` TEXT NOT NULL,  -- The name of the key owner.
-)
+    `key` TEXT NOT NULL,  -- The API key.
+    `name` TEXT NOT NULL, -- The name of the key owner.
+    `email` TEXT NOT NULL -- The email of the key owner.
+);
+
 """
 
 # Hack to make --make-config easier, OrderedDict means there's less problems.
 # Reminder: change here, change in the docs!
 skeleton = collections.OrderedDict()
-skeleton["debug"] = False
 
 skeleton["sql_path"] = "/path/to/chr.db"
 skeleton["soft_url_cap"] = 512
@@ -59,8 +58,12 @@ skeleton["soft_url_cap"] = 512
 skeleton["flask_host"] = "127.0.0.1"
 skeleton["flask_port"] = 8080
 skeleton["flask_base"] = "/"
-skeleton["flask_url"] = "http://change.this/{slug}"
 skeleton["flask_secret_key"] = "UNIQUE_KEY"
+
+skeleton["reserved"] = ["porn", "faggot", "sex", "nigger", "fuck",
+                        "cunt", "dick", "gay", "vagina", "penis",
+                        "tits", "boobs", "lesbian", "squirt",
+                        "titties", "squirting", "shit", "anal"]
 
 skeleton["captcha_public_key"] = "YOUR_PUBLIC_API_KEY"
 skeleton["captcha_private_key"] = "YOUR_PRIVATE_API_KEY"
@@ -69,14 +72,20 @@ skeleton["salt_password"] = "UNIQUE_KEY"
 
 skeleton["validate_urls"] = True
 skeleton["validate_requests"] = True
-skeleton["validate_regex"] = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.!&()=:;?,\-%]*)\/?$"
+skeleton["validate_regex"] = r"^(https?:\/\/)?([\da-z\.-]+)\.([a-z\.]{2,6})([\/\w \.!&()=:;?,\-%#]*)\/?$"
 skeleton["validate_fallback"] = True
 
 skeleton["api_enabled"] = False
 
-skeleton["_SCHEMA_REDIRECTS"] = "redirects"
-skeleton["_SCHEMA_USERS"] = "users"
-skeleton["_SCHEMA_CLICKS"] = "clicks"
-skeleton["_SCHEMA_MAX_SLUG"] = 32
-skeleton["_CUSTOM_CHAR"] = "+"
+# Stores DB table names (easly edet ur dotobuzzes)
+skeleton["_schema"] = {
+    "redirects": "redirects",
+    "users": "users",
+    "clicks": "clicks",
+    "api": "api",
+    "char": "+"
+}
+
+skeleton["_slug_max"] = 32
+
 skeleton["_version"] = chru.__version__

@@ -12,3 +12,4 @@ Contents
    usage
    settings
    autodoc
+   api/index
