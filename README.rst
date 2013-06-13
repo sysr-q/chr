@@ -1,6 +1,12 @@
 chr url shortener
 =================
 
+NOTE!
+=====
+As of the v3.0 refactor, chr is nolonger available to install via PyPI. This is mainly because the structure of the program and how it's used has/will change.
+
+****
+
 .. _docs: http://chr.rtfd.org
 
 **chr** (coded under the name ``chru``) is a Python based URL shortening service which uses Flask as a front end, and pysqlw as the SQL backend, to interface with sqlite3.

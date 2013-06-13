@@ -1,1 +1,0 @@
-from settings import s, schema, skeleton # say that three times fast.

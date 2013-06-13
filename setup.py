@@ -43,12 +43,7 @@ kw = {
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2"
-    ],
-    "entry_points": {
-        "console_scripts": [
-            'chru = chru.chra:main'
-        ]
-    }
+    ]
 }
 
 if __name__ == "__main__":

@@ -38,3 +38,5 @@ nosetests.xml
 # chr stuff
 chr_logs
 *.db
+# old source tree
+_chru
