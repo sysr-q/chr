@@ -55,6 +55,6 @@ Author
 
 Contributors
 ------------
-
 - huey
 - `Chris Leonello <http://www.jqplot.com>`_ (made jqPlot)
+- jaz303 (made tipsy)
