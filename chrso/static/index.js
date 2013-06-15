@@ -11,11 +11,11 @@ function shrink(i, ext) {
 	$tmp.remove();
 	var widthToSet = (ext + width) + 'px';
 	$input.width(widthToSet);
-	console.log("input: " + i + ", ext: " + ext + ", width: " + width + ", toSet: " + widthToSet);
+	console.log("input: " + i + ", ext: " + ext + ", width: " + width + "px, toSet: " + widthToSet);
 }
 
 function flash(msg, category) {
-	var num = document.last_err++;
+	var num = window.chrso.last_err++;
 	category = category || "success";
 	$err = $('<p class="flash flash-' + category + ' flash-num-' + num + '">' + msg + '</p>');
 	$('#flashes').append($err);
@@ -27,7 +27,7 @@ function flash(msg, category) {
 }
 
 function refresh_captcha() {
-	Recaptcha.create(window.recaptcha_public_key,
+	Recaptcha.create(window.chrso.recaptcha,
 		"recaptcha-goes-here",
 		{
 			theme: "clean",
@@ -36,10 +36,14 @@ function refresh_captcha() {
 	);
 }
 
-document.last_id = 0;
-document.last_err = 0;
+window.chrso = window.chrso || {recaptcha: null};
+window.chrso.last_id = 0;
+window.chrso.last_err = 0;
+
 
 $(function() {
+	$("#customize-extras").hide();
+
 	$(".enable-me").each(function() {
 		$(this).removeAttr("disabled");
 	});
@@ -53,8 +57,11 @@ $(function() {
 		$('#customize-extras').slideToggle();
 	});
 
-	refresh_captcha();
+	if ('recaptcha' in window.chrso) {
+		refresh_captcha();
+	}
 
+	/* old code: */
 	$("form#shrink-url").submit(function() {
 		console.log("Is: " + $(this).attr('method'));
 		console.log($(this).serialize());
@@ -66,7 +73,7 @@ $(function() {
 					flash(data.message, "error");
 					return;
 				}
-				var s1 = document.last_id++, s2 = document.last_id++, s3 = document.last_id++;
+				var s1 = window.chrso.last_id++, s2 = window.chrso.last_id++, s3 = window.chrso.last_id++;
 				var $url = $('<div class="chr-result"></div>');
 
 				var $close_ = $('<span class="close-btn right">&#10006;</span>');
@@ -140,4 +147,5 @@ $(function() {
 	//  of the form, and hence won't submit, ending
 	//  in some nasty 400 Bad Request replies, etc.
 	$('div[role="dialog"]').appendTo("form#shrink-url");
+	/* end old code */
 });

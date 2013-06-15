@@ -5,19 +5,21 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <script type="text/javascript">
-window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }}";
+window.chrso = window.chrso || {recaptcha: null};
+{% if recaptcha() %}window.chrso.recaptcha = "{{ recaptcha() }}";{% endif %}
 </script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}
 
-{% block title %}chr{% endblock %}
+{% block title %}chr - simple url shortening{% endblock %}
 
 {% block content %}
+<!--
+	Interested in hosting a chr shortener of your own?
+	You can! chr is open source, under the MIT license!
+	https://github.com/plausibility/chr
+-->
 <h1 id="chr-header">chr.so</h1>
-
-<noscript>
-	<span>Sorry! chr requires JavaScript :(</span>
-</noscript>
 
 {# Form related data: 
 	- url: the URL we want to shorten (text)
@@ -28,27 +30,27 @@ window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }
 	- reCAPTCHA? CSRF? Who knows.
 #}
 
-<form method="POST" id="shrink-url" action="{{ url_for('submit') }}">
-<input name="url" type="text" id="url-to-shrink" class="enable-me pretty" placeholder="http://" disabled="disabled"/>
-<button id="customize" class="button pretty tooltips" title="Customize URL">&#9881;</button>
-<input name="shrink" type="button" id="click-to-shrink" class="button enable-me pretty" disabled="disabled" value="Shrink!">
+<form method="POST" id="shrink-url" action="{{ url_for('submit') }}" data-chrso-submit="{{ url_for('submit', json=True) }}">
+<input name="url" type="text" id="url-to-shrink" class="pretty" placeholder="http://"/>
+<button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
+<input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
 
 <div id="customize-extras">
-	<input name="custom" type="text" id="chr-text-short" class="enable-me chr-text-short pretty" maxlength="32" placeholder="Custom URL" disabled="disabled" value=""/>
+	<input name="custom" type="text" id="chr-text-short" class="chr-text-short pretty" maxlength="32" placeholder="Custom URL" value=""/>
 	<div id="customize-boxes">
 		<label class="tooltips" title="This allows only <b>one</b> visit.">
-			<input type="checkbox" name="burn" class="enable-me" value="true" disabled="disabled"/>
+			<input type="checkbox" name="burn" value="true"/>
 			Burn after reading
 		</label>
 		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, etc.">
-			<input type="checkbox" name="statistics" class="enable-me" value="true" disabled="disabled" checked="checked"/>
+			<input type="checkbox" name="statistics" value="true" checked="checked"/>
 			Enable statistics
 		</label>
 	</div>
 </div>
 
-{# <span class="tooltips" title="Testing, testing, 1, 2, 3">Hey</span> #}
-
+{# <!-- old recaptcha stuff - should be changed -->
+<span class="tooltips" title="Testing, testing, 1, 2, 3">Hey</span>
 <div id="form-modal" style="display: none;">
 	<p>
 		Sorry, but we require this captcha to prevent spam.<br />
@@ -56,8 +58,15 @@ window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }
 	</p>
 	<div id="recaptcha-goes-here"></div>
 </div>
+#}
+
 </form>
 
-<div id="chr-results-group">
+<!--
+<div id="results">
+	<div class="result">
+		<input type="text" class="short" value="http://chr.so/whatever"/>
+	</div>
 </div>
+-->
 {% endblock %}
