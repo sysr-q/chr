@@ -1,6 +1,3 @@
-requests
 flask
-flask-kvsession
 recaptcha-client
-mattdaemon>=1.1.0
 pysqlw>=1.3.0

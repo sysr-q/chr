@@ -10,14 +10,20 @@ body {
     -webkit-box-sizing: border-box;
 }
 
-input {
+input, .trans {
     transition: all 0.15s linear 0s;
+}
+
+label, button, input[type="checkbox"], input[type="button"] {
+    cursor: pointer;
 }
 
 /* Everyone Approved Lack-Of-Underlined-Links */
 a {
     text-decoration: none;
 }
+
+/* These button rules should probably be cleaned up */
 
 .button {
     padding: 2px 4px;
@@ -104,6 +110,7 @@ noscript {
 .pretty {
     height: 35px;
     padding: 2px 4px;
+    padding-left: 5px;
     border-radius: 3px;
     display: inline-block;
     margin-bottom: 5px;
@@ -112,25 +119,49 @@ noscript {
 }
 
 #url-to-shrink {
-    width: 70%;
+    width: 64%;
 }
 
 #click-to-shrink {
-    width: 29%;
+    width: 28%;
     float: right;
     margin: 0;
+    margin-right: 5px;
     padding: 0 auto;
 }
 
-#modify-hack {
-    width: 8%;
+#customize {
+    width: 35px;
     float: right;
-    margin: 0;
-    margin-left: 5px;
-    padding: 0 auto;
+    font-size: 150%;
 }
 
-/* OLD SHIT * /
+#customize-extras {
+    display: none;
+    background-color: #dae7ed;
+    width: 100%;
+    padding: 5px;
+    padding-bottom: 1px;
+    border-radius: 4px;
+}
+
+/* our two checkboxes are in this */
+#customize-boxes {
+    display: inline-block;
+}
+
+#customize-boxes label {
+    display: inline-block;
+}
+
+/* input related? */
+
+input[type="checkbox"] {
+    position: relative;
+    top: 2px;
+}
+
+/* OLD CSS * /
 * {
     box-sizing: border-box;
     -moz-box-sizing: border-box;

@@ -19,23 +19,35 @@ window.recaptcha_public_key = window.recaptcha_public_key || "{{ recaptcha_key }
 	<span>Sorry! chr requires JavaScript :(</span>
 </noscript>
 
+{# Form related data: 
+	- url: the URL we want to shorten (text)
+	- custom: the custom (if any) URL to use. (text)
+	- burn: should be set the URL to burn after use? (checkbox, default: false)
+	- statistics: shall we enable statistics? (checkbox, default: true)
+
+	- reCAPTCHA? CSRF? Who knows.
+#}
+
 <form method="POST" id="shrink-url" action="{{ url_for('submit') }}">
 <input name="url" type="text" id="url-to-shrink" class="enable-me pretty" placeholder="http://" disabled="disabled"/>
-<!--
-<input type="button" id="modify-hack" class="button pretty" value="Customize"/>
--->
-
+<button id="customize" class="button pretty tooltips" title="Customize URL">&#9881;</button>
 <input name="shrink" type="button" id="click-to-shrink" class="button enable-me pretty" disabled="disabled" value="Shrink!">
 
-<input name="custom_url" type="text" id="chr-text-short" class="enable-me chr-text-short" maxlength="32" placeholder="custom url" disabled="disabled"/>
-<div class="chr-check-delete">
-	<label>
-		<input name="give_delete" type="checkbox" id="chr-check-delete" class="enable-me chr-check-delete" value="true" disabled="disabled"/>
-		Deletable?
-	</label>
+<div id="customize-extras">
+	<input name="custom" type="text" id="chr-text-short" class="enable-me chr-text-short pretty" maxlength="32" placeholder="Custom URL" disabled="disabled" value=""/>
+	<div id="customize-boxes">
+		<label class="tooltips" title="This allows only <b>one</b> visit.">
+			<input type="checkbox" name="burn" class="enable-me" value="true" disabled="disabled"/>
+			Burn after reading
+		</label>
+		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, etc.">
+			<input type="checkbox" name="statistics" class="enable-me" value="true" disabled="disabled" checked="checked"/>
+			Enable statistics
+		</label>
+	</div>
 </div>
 
-<span class="uh-tipsy" title="Testing, testing, 1, 2, 3">Hey</span>
+{# <span class="tooltips" title="Testing, testing, 1, 2, 3">Hey</span> #}
 
 <div id="form-modal" style="display: none;">
 	<p>

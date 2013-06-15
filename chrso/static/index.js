@@ -2,7 +2,7 @@ function shrink(i, ext) {
 	/* Shrink an input's width down
 	   to the size of its text.
 	*/
-	ext = ext || 10
+	ext = ext || 10;
 	var $input = $(i),
 		$tmp = $('<span class="resize-test" />');
 	$tmp.text($input.val());
@@ -17,7 +17,7 @@ function shrink(i, ext) {
 function flash(msg, category) {
 	var num = document.last_err++;
 	category = category || "success";
-	$err = $('<p class="flash flash-' + category + ' cflash-num-' + num + '">' + msg + '</p>');
+	$err = $('<p class="flash flash-' + category + ' flash-num-' + num + '">' + msg + '</p>');
 	$('#flashes').append($err);
 	setTimeout(function() {
 		$err.slideUp("slow", function() {
@@ -44,8 +44,13 @@ $(function() {
 		$(this).removeAttr("disabled");
 	});
 
-	$('.uh-tipsy').tipsy({
-		gravity: "n"
+	$('.tooltips').tipsy({
+		gravity: "n",
+		html: true
+	});
+
+	$('#customize').click(function () {
+		$('#customize-extras').slideToggle();
 	});
 
 	refresh_captcha();
