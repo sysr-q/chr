@@ -23,6 +23,7 @@ kw = {
     "include_package_data": True,
     "install_requires": [
         "flask",
+        "flask-wtf",
         "recaptcha-client",
         "pymongo"
     ],
