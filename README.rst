@@ -1,9 +1,10 @@
 chr url shortener
 =================
 
-NOTE!
-=====
-As of the v3.0 refactor, chr is nolonger available to install via PyPI. This is mainly because the structure of the program and how it's used has/will change.
+NB!
+---
+As of the `v3 refactor <https://github.com/plausibility/chr/tree/v3-refactor>`_ how you interact with chr (as a sysadmin) has changed significantly. You still install it via PyPI (probably), but you'll have to run it with something like gunicorn rather than via a command line script explicity for chr.  
+More info on this later into the refactor.
 
 ****
 
