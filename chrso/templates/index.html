@@ -6,7 +6,6 @@
 <script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <script type="text/javascript">
 window.chrso = window.chrso || {recaptcha: null};
-{% if recaptcha() %}window.chrso.recaptcha = "{{ recaptcha() }}";{% endif %}
 </script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}
@@ -51,21 +50,10 @@ window.chrso = window.chrso || {recaptcha: null};
 </div>
 
 {% if recaptcha() %}
-<div id="recaptcha">
+<div id="chr-recaptcha">
 	{{ form.captcha()|safe }}
 </div>
 {% endif %}
-
-{# <!-- old recaptcha stuff - should be changed -->
-<span class="tooltips" title="Testing, testing, 1, 2, 3">Hey</span>
-<div id="form-modal" style="display: none;">
-	<p>
-		Sorry, but we require this captcha to prevent spam.<br />
-		If you know a better way, send in a pull, <a href="https://github.com/plausibility/chr">@plausibility/chr</a>
-	</p>
-	<div id="recaptcha-goes-here"></div>
-</div>
-#}
 
 </form>
 

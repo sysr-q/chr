@@ -40,3 +40,5 @@ chr_logs
 *.db
 # old source tree
 _chru
+# this has my recaptcha keys in it
+testing.py

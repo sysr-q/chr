@@ -26,16 +26,6 @@ function flash(msg, category) {
 	}, 1000 * 2);
 }
 
-function refresh_captcha() {
-	Recaptcha.create(window.chrso.recaptcha,
-		"recaptcha-goes-here",
-		{
-			theme: "clean",
-			callback: function() {}
-		}
-	);
-}
-
 window.chrso = window.chrso || {recaptcha: null};
 window.chrso.last_id = 0;
 window.chrso.last_err = 0;
