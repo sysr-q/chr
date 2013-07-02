@@ -2,4 +2,5 @@
 """ chrso - the leanest (perhaps), meanest (if you look at it right)
     URL shortener written with Flask in the entire world (maybe...).
 """
+__version__ = "3.0a1"
 mongo = {"host": None, "port": None}
