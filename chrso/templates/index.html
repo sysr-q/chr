@@ -31,19 +31,19 @@ window.chrso = window.chrso || {recaptcha: null};
 #}
 
 <form method="POST" id="shrink-url" action="{{ url_for('submit') }}" data-chrso-submit="{{ url_for('submit', json=True) }}">
-<input name="url" type="text" id="url-to-shrink" class="pretty" placeholder="http://"/>
+{{ form.url(id="url-to-shrink", class="pretty", placeholder="http://") }}
 <button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
 <input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
 
 <div id="customize-extras">
-	<input name="custom" type="text" id="chr-text-short" class="chr-text-short pretty" maxlength="32" placeholder="Custom URL" value=""/>
+	{{ form.custom(id="chr-text-short", class="chr-text-short pretty", maxlength="32", placeholder="Custom URL", value="") }}
 	<div id="customize-boxes">
 		<label class="tooltips" title="This allows only <b>one</b> visit.">
-			<input type="checkbox" name="burn" value="true"/>
+			{{ form.burn(value="true") }}
 			Burn after reading
 		</label>
 		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, etc.">
-			<input type="checkbox" name="statistics" value="true" checked="checked"/>
+			{{ form.statistics(value="true", checked="checked") }}	
 			Enable statistics
 		</label>
 	</div>

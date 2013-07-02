@@ -10,7 +10,10 @@ from chrso import url
 
 
 class ShrinkForm(Form):
-    url = TextField(url)
+    url = TextField()
+    custom = TextField()
+    burn = BooleanField()
+    statistics = BooleanField()
 
 app = Flask(__name__)
 app.debug = True
