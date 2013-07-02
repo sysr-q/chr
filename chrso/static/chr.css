@@ -148,7 +148,7 @@ span.resize-test {
     font-size: 150%;
 }
 
-#customize-extras {
+#customize-extras, #recaptcha {
     /*display: none;*/
     background-color: #dae7ed;
     width: 100%;

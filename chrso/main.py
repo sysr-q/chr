@@ -2,7 +2,7 @@
 from flask import Flask, render_template
 from flask import abort
 
-from flask.ext.wtf import Form, validators
+from flask.ext.wtf import Form, validators, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
                      BooleanField)
 
@@ -14,16 +14,17 @@ class ShrinkForm(Form):
     custom = TextField()
     burn = BooleanField()
     statistics = BooleanField()
+    captcha = RecaptchaField()
 
 app = Flask(__name__)
 app.debug = True
 
 app.config.update({
-    "RECAPTCHA_PUBLIC": False,
-    "RECAPTCHA_PRIVATE": False,
+    "RECAPTCHA_PUBLIC_KEY": False,
+    "RECAPTCHA_PRIVATE_KEY": False,
 })
 app.jinja_env.globals.update({
-    "recaptcha": lambda: app.config['RECAPTCHA_PUBLIC'],
+    "recaptcha": lambda: app.config['RECAPTCHA_PUBLIC_KEY'],
 })
 
 

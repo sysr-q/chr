@@ -50,6 +50,12 @@ window.chrso = window.chrso || {recaptcha: null};
 	</div>
 </div>
 
+{% if recaptcha() %}
+<div id="recaptcha">
+	{{ form.captcha()|safe }}
+</div>
+{% endif %}
+
 {# <!-- old recaptcha stuff - should be changed -->
 <span class="tooltips" title="Testing, testing, 1, 2, 3">Hey</span>
 <div id="form-modal" style="display: none;">
