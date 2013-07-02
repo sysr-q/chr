@@ -9,7 +9,7 @@ from wtforms import (TextField, PasswordField, IntegerField,
 from chrso import url
 
 
-class SubmitForm(Form):
+class ShrinkForm(Form):
     url = TextField(url)
 
 app = Flask(__name__)
@@ -26,7 +26,7 @@ app.jinja_env.globals.update({
 
 @app.route("/")
 def index():
-    form = SubmitForm()
+    form = ShrinkForm()
     return render_template("index.html", form=form)
 
 
