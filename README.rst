@@ -19,7 +19,7 @@ Features
 
 - Can shorten several billion (yes!) unique urls to a less than 6 character slug.
 - Optionally verifies the shrunk URLs are legitimate, to stop abuse.
-- Can use reCAPTCHA to stop spammers from using the service for evil.
+- Can use reCAPTCHA to stop spammers from using the service for evil. (but it's optional!)
 - A live chr instance is located at `chr.so <http://chr.so>`_.
 
 Dependencies
