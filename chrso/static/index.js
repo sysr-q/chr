@@ -48,10 +48,6 @@ $(function() {
 		return false; // so we don't submit the form..
 	});
 
-	if ('recaptcha' in window.chrso) {
-		refresh_captcha();
-	}
-
 	/* old code: */
 	$("form#shrink-url").submit(function() {
 		return;
