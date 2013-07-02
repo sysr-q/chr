@@ -3,9 +3,8 @@
 {% block head %}
 {{ super() }}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-<script type="text/javascript" src="http://www.google.com/recaptcha/api/js/recaptcha_ajax.js"></script>
 <script type="text/javascript">
-window.chrso = window.chrso || {recaptcha: null};
+window.chrso = window.chrso || {};
 </script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}
