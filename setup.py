@@ -24,7 +24,7 @@ kw = {
     "install_requires": [
         "flask",
         "recaptcha-client",
-        "pysqlw>=1.3.0"
+        "pymongo"
     ],
     "zip_safe": False,
     "keywords": "url shrink short shortener",

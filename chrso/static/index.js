@@ -55,6 +55,7 @@ $(function() {
 
 	$('#customize').click(function () {
 		$('#customize-extras').slideToggle();
+		return false; // so we don't submit the form..
 	});
 
 	if ('recaptcha' in window.chrso) {
@@ -63,6 +64,8 @@ $(function() {
 
 	/* old code: */
 	$("form#shrink-url").submit(function() {
+		return;
+
 		console.log("Is: " + $(this).attr('method'));
 		console.log($(this).serialize());
 		$.post(
@@ -137,8 +140,8 @@ $(function() {
 		}
 	});
 
-	$("button#click-to-shrink").click(function() {
-		$("div#form-modal").dialog("open");
+	$("#click-to-shrink").click(function() {
+		//$("div#form-modal").dialog("open");
 	});
 
 	// This is to compensate for the fact that we're

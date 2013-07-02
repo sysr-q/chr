@@ -17,6 +17,10 @@ app.jinja_env.globals.update({
 def index():
     return render_template("index.html")
 
+@app.route("/tos")
+def tos():
+    return render_template("tos.html")
+
 @app.route("/submit", methods=["POST"])
 def submit():
     abort(403)
