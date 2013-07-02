@@ -42,6 +42,15 @@ Running
 
 Visit the `docs`_ page, and click **Usage** for information on how to run chr.
 
+Recaptcha
+---------
+To use reCAPTCHA, you have to set two fields in the Flask app's config before you run it:
+
+- ``RECAPTCHA_PUBLIC_KEY`` - what it says on the tin
+- ``RECAPTCHA_PRIVATE_KEY`` - also what it says on the tin
+
+More on this when v3-refactor is merged and documented.
+
 Author
 ------
 
