@@ -25,7 +25,8 @@ kw = {
         "flask",
         "flask-wtf",
         "recaptcha-client",
-        "pymongo"
+        "redis",
+        "hiredis",
     ],
     "zip_safe": False,
     "keywords": "url shrink short shortener",

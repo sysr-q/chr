@@ -17,7 +17,7 @@ window.chrso = window.chrso || {};
 	You can! chr is open source, under the MIT license!
 	https://github.com/plausibility/chr
 -->
-<h1 id="chr-header">chr.so</h1>
+<h1 id="chr-header">chr</h1><span id="chr-sub-heading">simple url shortening</span>
 
 {# Form related data: 
 	- url: the URL we want to shorten (text)
@@ -28,27 +28,27 @@ window.chrso = window.chrso || {};
 	- reCAPTCHA? CSRF? Who knows.
 #}
 
-<form method="POST" id="shrink-url" action="{{ url_for('submit') }}" data-chrso-submit="{{ url_for('submit', json=True) }}">
+<form method="POST" id="shrink-url" action="" data-chrso-submit="{{ url_for('index', json=True) }}">
 {{ form.hidden_tag() }}
 {{ form.url(id="url-to-shrink", class="pretty", placeholder="http://") }}
 <button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
 <input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
 
 <div id="customize-extras">
-	{{ form.custom(id="chr-text-short", class="chr-text-short pretty", maxlength="32", placeholder="Custom URL", value="") }}
+	{{ form.custom(id="chr-text-short", class="chr-text-short pretty", maxlength="32", placeholder="Custom URL") }}
 	<div id="customize-boxes">
 		<label class="tooltips" title="This allows only <b>one</b> visit.">
 			{{ form.burn(value="true") }}
 			Burn after reading
 		</label>
-		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, etc.">
+		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, hit count, etc.">
 			{{ form.statistics(value="true", checked="checked") }}	
 			Enable statistics
 		</label>
 	</div>
 </div>
 
-{% if recaptcha() %}
+{% if form.captcha %}
 <div id="chr-recaptcha">
 	{{ form.captcha()|safe }}
 </div>

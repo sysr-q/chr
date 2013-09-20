@@ -1,4 +1,5 @@
 flask
 wtforms
 flask-wtf
-pymongo
+redis
+hiredis

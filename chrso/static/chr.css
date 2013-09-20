@@ -98,6 +98,12 @@ a {
     color: #2BA6CB;
     font-size: 400%;
     margin-bottom: 0;
+    display: inline-block;
+}
+
+#chr-sub-heading {
+    margin-left: 6px;
+    color: #999;
 }
 
 /* resulting shortened urls */

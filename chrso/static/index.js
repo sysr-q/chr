@@ -38,103 +38,17 @@ $(function() {
 		$(this).removeAttr("disabled");
 	});
 
-	$('.tooltips').tipsy({
+	$(".tooltips").tipsy({
 		gravity: "n",
 		html: true
 	});
 
-	$('#customize').click(function () {
-		$('#customize-extras').slideToggle();
+	$("#customize").click(function () {
+		$("#customize-extras").slideToggle();
 		return false; // so we don't submit the form..
 	});
 
-	/* old code: */
-	$("form#shrink-url").submit(function() {
-		return;
-
-		console.log("Is: " + $(this).attr('method'));
-		console.log($(this).serialize());
-		$.post(
-			$(this).attr('action'),
-			$(this).serialize(),
-			function(data, textStatus, jqXHR) {
-				if (data.error == "true") {
-					flash(data.message, "error");
-					return;
-				}
-				var s1 = window.chrso.last_id++, s2 = window.chrso.last_id++, s3 = window.chrso.last_id++;
-				var $url = $('<div class="chr-result"></div>');
-
-				var $close_ = $('<span class="close-btn right">&#10006;</span>');
-
-				$close_.click(function() {
-					$(this).parent().slideUp(function() {
-						$(this).remove();
-					});
-				});
-
-				var $long_ = $('<div></div>')
-						.append('<h3>Long url</h3>')
-						.append('<input type="text" name="shorten-'+s1+'" class="chr-text-long shorten-'+s1+'" value="'+data.given+'" disabled="disabled" />');
-				var $short_ = $('<div></div>')
-						.append('<h3>Short url</h3>')
-						.append('<input type="text" name="shorten-'+s2+'" class="chr-text-long shorten-'+s2+'" value="'+data.url+'" readonly="readonly" />');
-				var $delete_ = $('<div></div>')
-						.append('<h3>Delete url (SAVE THIS)</h3>')
-						.append('<input type="text" name="shorten-'+s3+'" class="chr-text-long shorten-'+s3+'" value="'+data.delete+'" readonly="readonly" />');
-				$url.append($close_, $long_, $short_);
-				if (data.delete != "") {
-					$url.append($delete_);
-				}
-				$url.appendTo($('#chr-results-group'));
-				shrink('.shorten-' + s1);
-				shrink('.shorten-' + s2);
-				if (data.delete != "") {
-					shrink('.shorten-' + s3);
-				}
-				$("input#chr-text-long").val("http://");
-				$("input#chr-text-short").val("");
-				$("input#chr-check-delete").attr('checked', false);
-				flash(data.message);
-			}
-		);
-		return false;
-	});
-
-	$("div#form-modal").dialog({
-		autoOpen: false,
-		closeOnEscape: true,
-		draggable: false,
-		hide: "clip",
-		resizable: false,
-		height: 300,
-		width: 475,
-		modal: true,
-		buttons: {
-			"Submit": function() {
-				// We handle failures in the submit handler.
-				$("form#shrink-url").submit();
-				refresh_captcha();
-				$(this).dialog("close");
-			},
-			"Cancel": function() {
-				$(this).dialog("close");
-			}
-		},
-		close: function() {
-			// don't really need to do anything.
-		}
-	});
-
 	$("#click-to-shrink").click(function() {
-		//$("div#form-modal").dialog("open");
+		// TODO: new form submission (via jQuery) goes here
 	});
-
-	// This is to compensate for the fact that we're
-	//  serializing the form to send it.
-	// If we don't do this, the modal will be outside
-	//  of the form, and hence won't submit, ending
-	//  in some nasty 400 Bad Request replies, etc.
-	$('div[role="dialog"]').appendTo("form#shrink-url");
-	/* end old code */
 });

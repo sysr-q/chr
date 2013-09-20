@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import Flask, render_template
-from flask import abort
+from flask import (Flask, render_template, abort)
 
 from flask.ext.wtf import Form, validators, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
@@ -14,31 +13,18 @@ class ShrinkForm(Form):
     custom = TextField()
     burn = BooleanField()
     statistics = BooleanField()
+class ShrinkCaptcha(ShrinkForm):
     captcha = RecaptchaField()
 
 app = Flask(__name__)
-app.debug = True
 
-app.config.update({
-    "RECAPTCHA_PUBLIC_KEY": False,
-    "RECAPTCHA_PRIVATE_KEY": False,
-})
-app.jinja_env.globals.update({
-    "recaptcha": lambda: app.config['RECAPTCHA_PUBLIC_KEY'],
-})
+def get_shrink_form():
+    return ShrinkCaptcha() if "RECAPTCHA_PUBLIC_KEY" in app.config else ShrinkForm()
 
-
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    form = ShrinkForm()
+    form = get_shrink_form()
+    if form.validate_on_submit():
+        # TODO: check: 'json' in query string? -> jsonify() output
+        return "YEAH OK BRAH"
     return render_template("index.html", form=form)
-
-
-@app.route("/tos")
-def tos():
-    return render_template("tos.html")
-
-
-@app.route("/submit", methods=["POST"])
-def submit():
-    abort(403)
