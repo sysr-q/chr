@@ -24,7 +24,13 @@ def get_shrink_form():
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = get_shrink_form()
+    url = None
     if form.validate_on_submit():
-        # TODO: check: 'json' in query string? -> jsonify() output
+        # TODO: check for AJAX and jsonify() output
         return "YEAH OK BRAH"
-    return render_template("index.html", form=form)
+    return render_template("index.html", form=form, url=url)
+
+@app.route("/<url>")
+def reroute(url):  # redirect() would clash with flask.redirect
+    # TODO: check url.exists(), pull url.from_short(), url.hit(), redirect
+    abort(403)

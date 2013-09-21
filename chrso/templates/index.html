@@ -19,13 +19,11 @@ window.chrso = window.chrso || {};
 -->
 <h1 id="chr-header">chr</h1><span id="chr-sub-heading">simple url shortening</span>
 
-{# Form related data: 
+{# Form related data:
 	- url: the URL we want to shorten (text)
 	- custom: the custom (if any) URL to use. (text)
 	- burn: should be set the URL to burn after use? (checkbox, default: false)
 	- statistics: shall we enable statistics? (checkbox, default: true)
-
-	- reCAPTCHA? CSRF? Who knows.
 #}
 
 <form method="POST" id="shrink-url" action="" data-chrso-submit="{{ url_for('index', json=True) }}">
@@ -56,11 +54,11 @@ window.chrso = window.chrso || {};
 
 </form>
 
-<!--
+{% if url %}
 <div id="results">
 	<div class="result">
-		<input type="text" class="short" value="http://chr.so/whatever"/>
+		<input type="text" class="short" value="{{ url_for('reroute', url=url.short, _external=True) }}"/>
 	</div>
 </div>
--->
+{% endif %}
 {% endblock %}

@@ -1,9 +1,26 @@
 # -*- coding: utf-8 -*-
 import time
+import argparse
 
 import redis
 
 red = redis.StrictRedis()
+schema = argparse.Namespace(**{
+    "last": "chr:last",  # INCR this, yo
+    "id_map": "chr:id_map",  # k/v map of short -> id
+
+    "url": "chr:url:{0}",
+    # k/v map of hit ids (to cheat redis' difficulty)
+    # O(1) for maps vs O(n) for lists.
+    "url_hits": "chr:url:{0}:hits", 
+    "url_long": "chr:url:{0}:long",
+    "url_short": "chr:url:{0}:short",
+    
+    "hit": "chr:hit:{0}",
+    "hit_useragent": "chr:hit:{0}:useragent",  # UA string
+    "hit_time": "chr:hit:{0}:time",  # int(time.time())
+    "hit_ip": "chr:hit:{0}:ip",
+})
 
 def add(long, statistics, burn, short=None, ip=None, ptime=None):
     """ Shorten a long URL and add it to our database.
