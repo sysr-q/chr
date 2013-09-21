@@ -9,7 +9,7 @@ window.chrso = window.chrso || {};
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}
 
-{% block title %}chr - simple url shortening{% endblock %}
+{% block title %}{{ chr_header() }} - {{ chr_sub_header() }}{% endblock %}
 
 {% block content %}
 <!--
@@ -17,7 +17,7 @@ window.chrso = window.chrso || {};
 	You can! chr is open source, under the MIT license!
 	https://github.com/plausibility/chr
 -->
-<h1 id="chr-header">chr</h1><span id="chr-sub-heading">simple url shortening</span>
+<h1 id="chr-header">{{ chr_header() }}</h1><span id="chr-sub-heading">{{ chr_sub_header() }}</span>
 
 {# Form related data:
 	- url: the URL we want to shorten (text)
