@@ -3,9 +3,6 @@
 {% block head %}
 {{ super() }}
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
-<script type="text/javascript">
-window.chrso = window.chrso || {};
-</script>
 <script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
 {% endblock %}
 
@@ -17,7 +14,7 @@ window.chrso = window.chrso || {};
 	You can! chr is open source, under the MIT license!
 	https://github.com/plausibility/chr
 -->
-<h1 id="chr-header">{{ chr_header() }}</h1><span id="chr-sub-heading">{{ chr_sub_header() }}</span>
+<h1 id="chr-header"><a href="{{ url_for("index") }}">{{ chr_header() }}</a></h1><span id="chr-sub-heading">{{ chr_sub_header() }}</span>
 
 {# Form related data:
 	- url: the URL we want to shorten (text)
@@ -57,10 +54,17 @@ window.chrso = window.chrso || {};
 {% if url %}
 <div id="results">
 	<div class="result">
-		<input type="text" class="long" value="{{ url.long }}"/><br>
-		<input type="text" class="short" value="{{ url.short }}"/><br>
-		<input type="text" class="delete" value="{{ url.delete }}"/><br>
-		{% if not url.burn %}<input type="text" class="stats" value="{{ url.stats }}"/><br>{% endif %}
+		<h3 class="result-header">Long URL</h3><br>
+		<input type="text" class="pretty long bigger" value="{{ url.long }}"/><br>
+		<h3 class="result-header">Short URL</h3><br>
+		<input type="text" class="pretty short" value="{{ url.short }}"/><br>
+		<h3 class="result-header eek">Delete URL</h3>
+		<span class="result-sub-header">(You'll want to save this)</span><br>
+		<input type="text" class="pretty delete bigger" value="{{ url.delete }}"/><br>
+		{% if not url.burn -%}
+		<h3 class="result-header">Statistics URL</h3><br>
+		<input type="text" class="pretty stats" value="{{ url.stats }}"/><br>
+		{%- endif %}
 	</div>
 </div>
 {% endif %}

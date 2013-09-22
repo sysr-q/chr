@@ -63,6 +63,7 @@ label, button, input[type="checkbox"], input[type="button"] {
 /* Everyone Approved Lack-Of-Underlined-Links */
 a {
     text-decoration: none;
+    color: inherit;
 }
 
 /* These button rules should probably be cleaned up */
@@ -169,8 +170,22 @@ a {
     margin-top: 5px;
 }
 
-.result .short {
+.result-header {
+    color: #2BA6CB;
+    display: inline-block;
+    margin: 0 auto;
+}
 
+.result-sub-header {
+    color: #999;
+}
+
+.result .bigger {
+    width: 280px;
+}
+
+.result input[type="text"].pretty {
+    height: 25px;
 }
 
 /* main functionality - inputs */
@@ -210,7 +225,6 @@ span.resize-test {
 }
 
 #customize-extras, #chr-recaptcha {
-    /*display: none;*/
     background-color: #dae7ed;
     width: 100%;
     padding: 5px;
@@ -232,243 +246,4 @@ span.resize-test {
 input[type="checkbox"] {
     position: relative;
     top: 2px;
-}
-
-/* OLD CSS * /
-* {
-    box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-}
-
-.transition, input {
-    transition: all 0.15s linear 0s;
-}
-
-input[type="text"]:focus {
-    background-color: #FAFAFA;
-}
-
-#chr-header {
-    color: #2BA6CB;
-    font-size: 400%;
-    margin-bottom: 0;
-}
-
-.chr-noscript {
-    color: #E03A09;
-    font-size: 200%;
-    font-weight: bold;
-}
-
-.chr-button-shrink {
-    width: 80px;
-    height: 30px;
-
-    float: right;
-    margin: 0;
-    padding: 0 auto;
-
-    /*background: none repeat scroll 0 0 #2BA6CB;
-    border: 1px solid #1E728C;
-    border-radius: 2px 2px 2px 2px;
-    box-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5) inset;
-    color: #FFFFFF;
-    cursor: pointer;
-    display: inline-block;
-    font-weight: bold;
-    line-height: 1;
-    position: relative;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.15s ease-in-out 0s;* /
-}
-
-.chr-text-long {
-    width: 80%;
-    height: 30px;
-    background-color: #FFFFFF;
-    padding: 2px 4px 2px 4px;
-    border-radius: 2px 2px 2px 2px;
-    display: inline-block;
-    margin-bottom: 5px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
-    border: 1px solid #CCCCCC;
-}
-
-.close-btn, .pointer {
-    cursor: pointer;
-}
-
-.shorten {
-    width: 70%;
-}
-.shorten-lots {
-    width: 50%;
-}
-
-.chr-text-short {
-    width: 80px;
-    height: 28px;
-    margin-right: 5px;
-    padding: 2px 4px 2px 4px;
-    float: left;
-    background-color: #FFFFFF;
-    border-radius: 2px 2px 2px 2px;
-    display: block;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
-    border: 1px solid #CCCCCC;
-}
-
-.chr-check-delete {
-    height: 28px;
-    display: inline-block; /* so it doesn't bump out .chr-button-shrink * /
-}
-
-.chr-check-delete label {
-    display: block;
-    float: left;
-    padding-right: 10px;
-    white-space: nowrap;
-}
-
-.chr-check-delete input {
-    vertical-align: middle;
-}
-
-.chr-check-delete label span {
-    vertical-align: middle;
-}
-
-
-.chr-button-shrink[disabled="disabled"], .chr-button-shrink.disabled {
-    background: none repeat scroll 0 0 #c0c0c0;
-    color: #000000;
-}
-
-div#chr-results-group {
-    margin-top: 10px;
-}
-
-div.chr-result {
-    width: 100%;
-    padding: 5px;
-    margin-bottom: 10px;
-    background-color: #C8DBE4;
-    border: 1px solid #CCCCCC;
-    border-radius: 5px 5px 5px 5px;
-}
-
-div.chr-result div {
-    margin: 0;
-    padding: 0;
-    line-height: 18px;
-    height: 51px;
-}
-
-div.chr-result div > h3 {
-    font-size: 15px;
-    font-weight: bold;
-    line-height: 18px;
-    margin: 0px 0px 0px 2px;
-}
-
-div.chr-result div > input[type="text"] {
-    border: 0 none;
-    border-radius: 2px 2px 2px 2px;
-    font-size: 14px;
-    line-height: 14px;
-    margin-bottom: 5px;
-    padding: 6px;
-    padding-right: 0px;
-    width: 100%;
-    max-width: 100%;
-    font-family: inherit;
-}
-
-span.resize-test {
-    font-family: inherit;
-    font-size: 14px;
-    line-height: 14px;
-}
-
-body {
-    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
-    font-size: 13px;
-    background-color: #EBF2F5;
-    color: #6F6F6F;
-    margin: 0 auto;
-}
-
-.container_12 {
-    color: #000000;
-    background-color: #EBF2F5;
-}
-
-.content {
-    
-}
-
-a {
-    text-decoration: none;
-    font-weight: bold;
-}
-
-a:link {
-    color: #1F1F1F;
-}
-
-a:visited {
-    color: #5C5C5C;
-}
-
-a:hover, a:active {
-    color: #757575;
-}
-
-a.no_hover:link, a.no_hover:hover, a.no_hover:visited, a.no_hover:active {
-    color: inherit;
-}
-
-/* NSA approved flashes; srsly * /
-#flashes {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    margin: 0 auto;
-    padding: 0;
-    width: 100%;
-}
-
-.flash {
-    position: relative;
-    top: 0px;
-    left: 0px;
-    border: 1px solid;
-    margin: 0px;
-    padding: 8px 8px 8px 8px;
-    width: 100%;
-    font: bold 14px verdana;
-    -moz-box-shadow-bottom: 0 0 5px #888;
-    -webkit-box-shadow-bottom: 0 0 5px#888;
-    box-shadow-bottom: 0 0 5px #888;
-    text-shadow: 2px 2px 2px #ccc;
-    z-index: 1000; /* Above everything! * /
-}
-
-.flash-info {
-    color: #00529B;
-    background: #BDE5F8;
-}
-.flash-success {
-    color: #4F8A10;
-    background: #DFF2BF;
-}
-.flash-warning {
-    color: #9F6000;
-    background: #FEEFB3;
-}
-.flash-error {
-    color: #D8000C;
-    background: #FFBABA;
 }
