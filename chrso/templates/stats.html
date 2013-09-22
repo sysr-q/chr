@@ -128,7 +128,7 @@ $(document).ready(function() {
 {% endblock %}
 {% block title %}{{ chr_header() }} - url stats{% endblock %}
 {% block content %}
-<h1 id="chr-header-stats">{{ chr_header() }}</h1><span id="chr-sub-heading">url stats</span><br>
+<h1 id="chr-header-stats"><a href="{{ url_for('index') }}">{{ chr_header() }}</a></h1><span id="chr-sub-heading">url stats</span><br>
 <noscript>
 	<span class="chr-noscript"><b>Without JavaScript, you won't see the pretty graphs! :(</b></span>
 </noscript>
