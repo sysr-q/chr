@@ -62,6 +62,9 @@ def index():
                 "delete": url_for("delete", short=url_[0], key=url_[1], _external=True),
                 "burn": form.burn.data,
             }
+            form.url.data = form.custom.data = ""
+            form.statistics.data = True
+            form.burn.data = False
     return render()
 
 @app.route("/<short>")
