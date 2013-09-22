@@ -128,11 +128,16 @@ $(document).ready(function() {
 {% endblock %}
 {% block title %}{{ chr_header() }} - url stats{% endblock %}
 {% block content %}
-<h1 id="chr-header-stats">{{ chr_header() }}</h1><span id="chr-sub-heading">url stats</span>
+<h1 id="chr-header-stats">{{ chr_header() }}</h1><span id="chr-sub-heading">url stats</span><br>
 <noscript>
 	<span class="chr-noscript"><b>Without JavaScript, you won't see the pretty graphs! :(</b></span>
 </noscript>
 <div id="chr-stats">
+{% if stats.hits.all == 0 %}
+	<p>
+		Nobody has visited your URL yet.. <b>:(</b>
+	</p>
+{% else %}
 	<p>
 		Stats for <a href="{{ stats.short }}">{{ stats.short }}</a><br/>
 		<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
@@ -173,5 +178,6 @@ $(document).ready(function() {
 			{%- endfor -%}</p>
 		</noscript>
 	</div>
+{% endif %}
 </div>
 {% endblock %}

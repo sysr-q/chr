@@ -92,7 +92,7 @@ def stats(short):
             "unique": hits_unique_len,
             "return": (hits_len - hits_unique_len) if hits_len > 0 else 0,
             # (unique / all)% of visitors only come once
-            "ratio": str(round(float(hits_unique_len) / float(hits_len), 2))[2:],
+            "ratio": (str(round(float(hits_unique_len) / float(hits_len), 2))[2:]) if hits_len > 0 else None,
             "all": hits_len,
         },
         "clicks": {
