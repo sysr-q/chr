@@ -18,12 +18,8 @@ class ShrinkCaptcha(ShrinkForm):
 
 app = Flask(__name__)
 app.jinja_env.globals.update({
-    "chr_header": lambda: app.config["CHR_HEADER"]
-                  if "CHR_HEADER" in app.config
-                  else "chr",
-    "chr_sub_header": lambda: app.config["CHR_SUB_HEADER"]
-                      if "CHR_SUB_HEADER" in app.config
-                      else "simple url shortening", 
+    "chr_header": lambda: app.config.get("CHR_HEADER", "chr"),
+    "chr_sub_header": lambda: app.config.get("CHR_SUB_HEADER", "simple url shortening"),
 })
 
 def get_shrink_form():
@@ -38,12 +34,13 @@ def index():
         return "YEAH OK BRAH"
     return render_template("index.html", form=form, url=surl)
 
-@app.route("/<url>")
-def reroute(url):  # redirect() would clash with flask.redirect
+@app.route("/<short>")
+def reroute(short):  # redirect() would clash with flask.redirect
     # TODO: check url.exists(), pull url.from_short(), url.hit(), redirect
-    abort(403)
+    if not url.exists(short):
+        return redirect
 
-@app.route("/<url>/stats")
-def stats(url):
+@app.route("/<short>/stats")
+def stats(short):
     # TODO: check url.exists(), pull all url hits, render some pretty graphs
     abort(403)

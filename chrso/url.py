@@ -25,6 +25,7 @@ def partial_format(part):
 
 schema = argparse.Namespace(**{
     "last": "chr:last",  # INCR this, yo
+    "last_hit": "chr:last_hit",  # INCR this as well
     "id_map": "chr:id_map",  # k/v map of short -> id
 
     # format in id from `id_map`
@@ -41,8 +42,8 @@ schema = argparse.Namespace(**{
     # format in hit ids from `url_hits`, yo
     "hit_useragent": partial_format("chr:hit:{0}:useragent"),  # UA string
     "hit_os": partial_format("chr:hit:{0}:os"),  # Flask reported operating system
-    "hit_time": partial_format("chr:hit:{0}:time"),  # int(time.time())
     "hit_ip": partial_format("chr:hit:{0}:ip"),
+    "hit_time": partial_format("chr:hit:{0}:time"),  # int(time.time())
 })
 
 def add(long_, statistics, burn, short=None, ua=None, ip=None, ptime=None, delete=None):
@@ -89,39 +90,35 @@ def add(long_, statistics, burn, short=None, ua=None, ip=None, ptime=None, delet
     return True
 
 
-def remove(ident, ident_is_short=False):
+def remove(ident):
     """ Remove a shortened URL from our database.
 
         :param ident: an identifier for the URL we want to remove.
-        :param ident_is_short: if this is True, the given :ident: is
-            actually a shortened URL which we want to remove, rather
-            than a row ID.
     """
-    if not exists(ident, ident_is_short):
+    if not exists(ident):
         return False
-    if ident_is_short:
-        ident = from_short(ident)
-    short = red.get(schema.url_short(ident))
-    hits = red.lrange(schema.url_hits(ident), 0, -1)
+    id_ = row_id(ident)
+    short = red.get(schema.url_short(id_))
+    hits = red.lrange(schema.url_hits(id_), 0, -1)
     fmts = [schema.hit_useragent,schema.hit_os,schema.hit_time,schema.hit_ip]
     # shoutouts to: akiaki
-    hits = reduce(lambda x, y: x+y, [[f.format(i) for f in fmts] for i in hits])
+    hits = reduce(lambda x, y: x+y, [[f(i) for f in fmts] for i in hits])
     red.hdel(schema.id_map, short)  # remove the short from our id_map
     red.delete(
-        schema.url_long(ident),
-        schema.url_stats(ident),
-        schema.url_burn(ident),
-        schema.url_short(ident),
-        schema.url_useragent(ident),
-        schema.url_ip(ident),
-        schema.url_time(ident),
-        schema.url_delete(ident),
+        schema.url_long(id_),
+        schema.url_stats(id_),
+        schema.url_burn(id_),
+        schema.url_short(id_),
+        schema.url_useragent(id_),
+        schema.url_ip(id_),
+        schema.url_time(id_),
+        schema.url_delete(id_),
         *hits  # kill all the hits too
     )
     return True
 
 
-def hit(ident, ident_is_short=False, ip=None, ua=None, ptime=None):
+def hit(ident, ua=None, os_=None, ip=None, ptime=None):
     """ Add a 'hit' to the database for a given URL.
         If the given URL is a "burn after reading" url, it will be
         expunged by this function.
@@ -129,35 +126,61 @@ def hit(ident, ident_is_short=False, ip=None, ua=None, ptime=None):
         unless we're removing a burn after reading URL.
 
         :param ident: an identifier for the URL we want to add a hit to.
-        :param ident_is_short: if this is True, the given :ident: is
-            actually a shortened URL which we want to remove, rather
-            than a row ID.
+        :param ua: the user-agent of the user
+        :param os_: the OS reported by Flask
+        :param ip: the IP of the user
+        :param ptime: the time the hit occured (None means current time)
     """
-    pass
+    if not exists(ident):
+        return False
+    if should_burn(ident):
+        return remove(ident)
+    id_ = row_id(ident)
+    has_stats = bool(red.get(schema.url_stats(id_)))
+    if not has_stats:
+        # We're intentionally doing nothing.
+        return True
+    last = red.incr(schema.last_hit)
+    if ua is None:
+        ua = ""
+    if os_ is None:
+        os_ = ""
+    if ip is None:
+        ip = ""
+    if ptime is None:
+        ptime = int(time.time())
+    red.set(schema.hit_useragent(last), ua)
+    red.set(schema.hit_os(last), os_)
+    red.set(schema.hit_ip(last), ip)
+    red.set(schema.hit_time(last), ptime)
+    red.lpush(schema.url_hits(id_), last)  # push this to the url hits
+    return True
 
-def should_burn(ident, ident_is_short=False):
+
+def should_burn(ident):
     """ Find out whether or not the given URL is a burn after reading URL.
 
         :param ident: an identifier for the URL we want info about.
-        :param ident_is_short: if this is True, the given :ident: is
-            actually a shortened URL which we want to remove, rather
-            than a row ID.
     """
-    pass
+    if not exists(ident):
+        return False
+    id_ = row_id(ident)
+    return bool(red.get(schema.url_burn(id_)))
 
-def exists(ident, ident_is_short=True):
+def exists(ident):
     """ Find out whether the given ident (URL, usually) exists.
 
         :param ident: an identifier for the URL we want info about.
-        :param ident_is_short: if this is True (the default), the given
-            :ident is actually a shortened URL which we want to remove,
-            rather than a row ID.
     """
-    pass
+    return red.hexists(schema.id_map, ident)
 
-def from_short(ident):
-    """ Finds the given row identifer from the short (URL) identifier.
+def long(ident):
+    if not exists(ident):
+        return
+    id_ = row_id(ident)
+    return red.get(schema.url_long(id_))
 
-        :param ident: the shortened URL we're trying to find an ID for.
-    """
-    pass
+def row_id(ident):
+    if not exists(ident):
+        return
+    return red.hget(schema.id_map, ident)
