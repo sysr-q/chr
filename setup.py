@@ -8,47 +8,35 @@ def long_desc():
     with open('README.rst', 'rb') as f:
         return f.read()
 
-execfile('chru/version.py')
-
 kw = {
     "name": "chr",
-    "version": __version__,
-    "description": "Python based URL shortening service",
+    "version": "3.0a1",
+    "description": "Minimalistic Python based URL shortening service",
     "long_description": long_desc(),
     "url": "https://github.com/plausibility/chr",
     "author": "plausibility",
     "author_email": "chris@gibsonsec.org",
     "license": "MIT",
     "packages": [
-        'chru',
-        'chru.api',
-        'chru.api.web',
-        'chru.web',
-        'chru.utility',
+        'chrso'
     ],
     "include_package_data": True,
     "install_requires": [
-        "requests",
         "flask",
-        "flask-kvsession",
+        "flask-wtf",
         "recaptcha-client",
-        "mattdaemon>=1.1.0",
-        "pysqlw>=1.3.0"
+        "redis",
+        "hiredis",
     ],
     "zip_safe": False,
-    "keywords": "url short shortener slug",
+    "keywords": "url shrink short shortener",
     "classifiers": [
         "Development Status :: 4 - Beta",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2"
-    ],
-    "entry_points": {
-        "console_scripts": [
-            'chru = chru.chra:main'
-        ]
-    }
+    ]
 }
 
 if __name__ == "__main__":

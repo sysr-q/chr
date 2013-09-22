@@ -1,0 +1,249 @@
+body {
+    font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+    background-color: #EBF2F5;
+    color: #6F6F6F;
+}
+
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+#flashes {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+}
+
+.flash {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    border: 1px solid;
+    margin: 0px;
+    padding: 8px 8px 8px 8px;
+    width: 100%;
+    font: bold 14px verdana;
+    -moz-box-shadow-bottom: 0 0 5px #888;
+    -webkit-box-shadow-bottom: 0 0 5px#888;
+    box-shadow-bottom: 0 0 5px #888;
+    text-shadow: 2px 2px 2px #ccc;
+    z-index: 1000; /* Above everything! */
+}
+
+.flash-info {
+    color: #00529B;
+    background: #BDE5F8;
+}
+.flash-success {
+    color: #4F8A10;
+    background: #DFF2BF;
+}
+.flash-warning {
+    color: #9F6000;
+    background: #FEEFB3;
+}
+.flash-error {
+    color: #D8000C;
+    background: #FFBABA;
+}
+
+input, .trans {
+    transition: all 0.15s linear 0s;
+}
+
+label, button, input[type="checkbox"], input[type="button"] {
+    cursor: pointer;
+}
+
+/* Everyone Approved Lack-Of-Underlined-Links */
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* These button rules should probably be cleaned up */
+
+.button {
+    padding: 2px 4px;
+    background-color: #4479BA;
+    color: #FFF;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    border: none;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.4);
+    -webkit-transition-duration: 0.2s;
+    -moz-transition-duration: 0.2s;
+    transition-duration: 0.2s;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -ms-user-select:none;
+    user-select:none;
+}
+
+.button:hover {
+    background-color: #356094;
+    text-decoration: none;
+}
+
+.button:active {
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.6);
+    background-color: #2E5481;
+}
+
+.button.green {
+    background-color: #5bb75b;
+    border-color: #51a351;
+}
+
+.button.green:hover, 
+.button.green:active {
+    background-color: #51a351;
+}
+
+.button.red {
+    background-color: #da4f49;
+    border-color: #bd362f;
+}
+
+.button.red:hover,
+.button.red:active {
+    background-color: #bd362f;
+}
+
+.button.orange {
+    background-color: #faa732;
+    border-color: #f89406;
+}
+
+.button.orange:hover,
+.button.orange:active {
+    background-color: #f89406;
+}
+
+.button.cyan {
+    background-color: #49afcd;
+    border-color: #2f96b4;
+}
+
+.button.cyan:hover,
+.button.cyan:active {
+    background-color: #2f96b4;
+}
+
+/* Header-related */
+.pretty-blue {
+    color: #2BA6CB;
+}
+.pretty-grey {
+    color: #999;
+}
+
+#chr-header {
+    color: #2BA6CB;
+    font-size: 400%;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+#chr-header-stats {
+    color: #2BA6CB;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+#chr-sub-heading {
+    margin-left: 6px;
+    color: #999;
+}
+
+/* resulting shortened urls */
+.result {
+    background-color: #dae7ed;
+    width: 100%;
+    padding: 5px;
+    margin-top: 5px;
+}
+
+.result-header {
+    color: #2BA6CB;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.result-sub-header {
+    color: #999;
+}
+
+.result .bigger {
+    width: 280px;
+}
+
+.result input[type="text"].pretty {
+    height: 25px;
+}
+
+/* main functionality - inputs */
+.pretty {
+    height: 35px;
+    padding: 2px 4px;
+    padding-left: 5px;
+    border-radius: 3px;
+    display: inline-block;
+    margin-bottom: 5px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) inset;
+    border: 1px solid #CCCCCC;
+}
+
+span.resize-test {
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 14px;
+}
+
+#url-to-shrink {
+    width: 64%;
+}
+
+#click-to-shrink {
+    width: 28%;
+    float: right;
+    margin: 0;
+    margin-right: 5px;
+    padding: 0 auto;
+}
+
+#customize {
+    width: 35px;
+    float: right;
+    font-size: 150%;
+}
+
+#customize-extras, #chr-recaptcha {
+    background-color: #dae7ed;
+    width: 100%;
+    padding: 5px;
+    padding-bottom: 1px;
+    border-radius: 4px;
+}
+
+/* our two checkboxes are in this */
+#customize-boxes {
+    display: inline-block;
+}
+
+#customize-boxes label {
+    display: inline-block;
+}
+
+/* input related? */
+
+input[type="checkbox"] {
+    position: relative;
+    top: 2px;
+}

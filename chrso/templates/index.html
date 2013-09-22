@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+<script type="text/javascript" src="{{ url_for('.static', filename='index.js') }}"></script>
+{% endblock %}
+
+{% block title %}{{ chr_header() }} - {{ chr_sub_header() }}{% endblock %}
+
+{% block content %}
+<!--
+	Interested in hosting a chr shortener of your own?
+	You can! chr is open source, under the MIT license!
+	https://github.com/plausibility/chr
+-->
+<h1 id="chr-header"><a href="{{ url_for("index") }}">{{ chr_header() }}</a></h1><span id="chr-sub-heading">{{ chr_sub_header() }}</span>
+
+{# Form related data:
+	- url: the URL we want to shorten (text)
+	- custom: the custom (if any) URL to use. (text)
+	- burn: should be set the URL to burn after use? (checkbox, default: false)
+	- statistics: shall we enable statistics? (checkbox, default: true)
+#}
+
+<form method="POST" id="shrink-url" action="" data-chrso-submit="{{ url_for('index', json=True) }}">
+{{ form.hidden_tag() }}
+{{ form.url(id="url-to-shrink", class="pretty", placeholder="http://") }}
+<button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
+<input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
+
+<div id="customize-extras">
+	{{ form.custom(id="chr-text-short", class="chr-text-short pretty", maxlength="32", placeholder="Custom URL") }}
+	<div id="customize-boxes">
+		<label class="tooltips" title="This allows only <b>one</b> visit.">
+			{{ form.burn(value="true") }}
+			Burn after reading
+		</label>
+		<label class="tooltips" title="Do you want URL statistics?<br>Things like OS, browser, hit count, etc.">
+			{{ form.statistics(value="true", checked="checked") }}	
+			Enable statistics
+		</label>
+	</div>
+</div>
+
+{% if form.captcha %}
+<div id="chr-recaptcha">
+	{{ form.captcha()|safe }}
+</div>
+{% endif %}
+
+</form>
+
+{% if url %}
+<div id="results">
+	<div class="result">
+		<h3 class="result-header">Long URL</h3><br>
+		<input type="text" class="pretty long bigger" value="{{ url.long }}"/><br>
+		<h3 class="result-header">Short URL</h3><br>
+		<input type="text" class="pretty short" value="{{ url.short }}"/><br>
+		<h3 class="result-header eek">Delete URL</h3>
+		<span class="result-sub-header">(You'll want to save this)</span><br>
+		<input type="text" class="pretty delete bigger" value="{{ url.delete }}"/><br>
+		{% if not url.burn -%}
+		<h3 class="result-header">Statistics URL</h3><br>
+		<input type="text" class="pretty stats" value="{{ url.stats }}"/><br>
+		{%- endif %}
+	</div>
+</div>
+{% endif %}
+{% endblock %}
