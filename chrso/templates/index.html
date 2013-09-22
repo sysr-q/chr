@@ -28,7 +28,7 @@ window.chrso = window.chrso || {};
 
 <form method="POST" id="shrink-url" action="" data-chrso-submit="{{ url_for('index', json=True) }}">
 {{ form.hidden_tag() }}
-{{ form.url(id="url-to-shrink", class="pretty", placeholder="http://") }}
+{{ form.url(id="url-to-shrink", class="pretty", placeholder="http://", value="") }}
 <button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
 <input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
 
@@ -57,7 +57,10 @@ window.chrso = window.chrso || {};
 {% if url %}
 <div id="results">
 	<div class="result">
-		<input type="text" class="short" value="{{ url_for('reroute', url=url.short, _external=True) }}"/>
+		<input type="text" class="long" value="{{ url.long }}"/><br>
+		<input type="text" class="short" value="{{ url.short }}"/><br>
+		<input type="text" class="delete" value="{{ url.delete }}"/><br>
+		{% if not url.burn %}<input type="text" class="stats" value="{{ url.stats }}"/><br>{% endif %}
 	</div>
 </div>
 {% endif %}

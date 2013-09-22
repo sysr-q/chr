@@ -10,6 +10,48 @@ body {
     -webkit-box-sizing: border-box;
 }
 
+#flashes {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    margin: 0 auto;
+    padding: 0;
+    width: 100%;
+}
+
+.flash {
+    position: relative;
+    top: 0px;
+    left: 0px;
+    border: 1px solid;
+    margin: 0px;
+    padding: 8px 8px 8px 8px;
+    width: 100%;
+    font: bold 14px verdana;
+    -moz-box-shadow-bottom: 0 0 5px #888;
+    -webkit-box-shadow-bottom: 0 0 5px#888;
+    box-shadow-bottom: 0 0 5px #888;
+    text-shadow: 2px 2px 2px #ccc;
+    z-index: 1000; /* Above everything! */
+}
+
+.flash-info {
+    color: #00529B;
+    background: #BDE5F8;
+}
+.flash-success {
+    color: #4F8A10;
+    background: #DFF2BF;
+}
+.flash-warning {
+    color: #9F6000;
+    background: #FEEFB3;
+}
+.flash-error {
+    color: #D8000C;
+    background: #FFBABA;
+}
+
 input, .trans {
     transition: all 0.15s linear 0s;
 }

@@ -41,7 +41,6 @@ schema = argparse.Namespace(**{
 
     # format in hit ids from `url_hits`, yo
     "hit_useragent": partial_format("chr:hit:{0}:useragent"),  # UA string
-    "hit_os": partial_format("chr:hit:{0}:os"),  # Flask reported operating system
     "hit_ip": partial_format("chr:hit:{0}:ip"),
     "hit_time": partial_format("chr:hit:{0}:time"),  # int(time.time())
 })
@@ -60,7 +59,7 @@ def add(long_, statistics, burn, short=None, ua=None, ip=None, ptime=None, delet
             used if omitted)
         :param delete: the deletion key that can be used to remove the
             url by the user.
-        :return: True/False, depending on if the URL was added.
+        :return: False if url add failed, (slug, delete) otherwise
     """
     if short is not None and exists(short):
         return False
@@ -87,7 +86,7 @@ def add(long_, statistics, burn, short=None, ua=None, ip=None, ptime=None, delet
     red.set(schema.url_time(last), ptime)
     red.set(schema.url_delete(last), delete)
     # url_hits is created on lpush()
-    return True
+    return (short, delete)
 
 
 def remove(ident):
@@ -100,9 +99,10 @@ def remove(ident):
     id_ = row_id(ident)
     short = red.get(schema.url_short(id_))
     hits = red.lrange(schema.url_hits(id_), 0, -1)
-    fmts = [schema.hit_useragent,schema.hit_os,schema.hit_time,schema.hit_ip]
+    fmts = [schema.hit_useragent, schema.hit_time, schema.hit_ip]
     # shoutouts to: akiaki
-    hits = reduce(lambda x, y: x+y, [[f(i) for f in fmts] for i in hits])
+    if hits:
+        hits = reduce(lambda x, y: x+y, [[f(i) for f in fmts] for i in hits])
     red.hdel(schema.id_map, short)  # remove the short from our id_map
     red.delete(
         schema.url_long(id_),
@@ -118,7 +118,7 @@ def remove(ident):
     return True
 
 
-def hit(ident, ua=None, os_=None, ip=None, ptime=None):
+def hit(ident, ua=None, ip=None, ptime=None):
     """ Add a 'hit' to the database for a given URL.
         If the given URL is a "burn after reading" url, it will be
         expunged by this function.
@@ -127,7 +127,6 @@ def hit(ident, ua=None, os_=None, ip=None, ptime=None):
 
         :param ident: an identifier for the URL we want to add a hit to.
         :param ua: the user-agent of the user
-        :param os_: the OS reported by Flask
         :param ip: the IP of the user
         :param ptime: the time the hit occured (None means current time)
     """
@@ -136,21 +135,18 @@ def hit(ident, ua=None, os_=None, ip=None, ptime=None):
     if should_burn(ident):
         return remove(ident)
     id_ = row_id(ident)
-    has_stats = bool(red.get(schema.url_stats(id_)))
+    has_stats = bool(int(red.get(schema.url_stats(id_))))
     if not has_stats:
         # We're intentionally doing nothing.
         return True
     last = red.incr(schema.last_hit)
     if ua is None:
         ua = ""
-    if os_ is None:
-        os_ = ""
     if ip is None:
         ip = ""
     if ptime is None:
         ptime = int(time.time())
     red.set(schema.hit_useragent(last), ua)
-    red.set(schema.hit_os(last), os_)
     red.set(schema.hit_ip(last), ip)
     red.set(schema.hit_time(last), ptime)
     red.lpush(schema.url_hits(id_), last)  # push this to the url hits
@@ -165,7 +161,16 @@ def should_burn(ident):
     if not exists(ident):
         return False
     id_ = row_id(ident)
-    return bool(red.get(schema.url_burn(id_)))
+    burn = int(red.get(schema.url_burn(id_)))
+    return bool(burn)
+
+
+def delete_key(ident):
+    if not exists(ident):
+        return
+    id_ = row_id(ident)
+    return red.get(schema.url_delete(id_))
+
 
 def exists(ident):
     """ Find out whether the given ident (URL, usually) exists.
@@ -173,6 +178,7 @@ def exists(ident):
         :param ident: an identifier for the URL we want info about.
     """
     return red.hexists(schema.id_map, ident)
+
 
 def long(ident):
     if not exists(ident):
