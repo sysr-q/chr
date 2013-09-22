@@ -153,6 +153,21 @@ def hit(ident, ua=None, ip=None, ptime=None):
     return True
 
 
+def hits(ident):
+    if not exists(ident):
+        return
+    id_ = row_id(ident)
+    hits = []
+    hit_ids = red.lrange(schema.url_hits(id_), 0, -1)
+    for hit in hit_ids:
+        hits.append({
+            "useragent": red.get(schema.hit_useragent(hit)),
+            "time": int(red.get(schema.hit_time(hit))),
+            "ip": red.get(schema.hit_ip(hit))
+        })
+    return hits
+
+
 def should_burn(ident):
     """ Find out whether or not the given URL is a burn after reading URL.
 

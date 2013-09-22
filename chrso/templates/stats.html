@@ -117,15 +117,15 @@ $(document).ready(function() {
 <style type="text/css">
 </style>
 {% endblock %}
-{% block title %}{{ chr_heading() }} - url stats{% endblock %}
+{% block title %}{{ chr_header() }} - url stats{% endblock %}
 {% block content %}
-<h1 class="chr-header">{{ chr_heading() }} - url stats</h1>
+<h1 id="chr-header-stats">{{ chr_header() }}</h1><span id="chr-sub-heading">url stats</span>
 <noscript>
 	<span class="chr-noscript"><b>Without JavaScript, you can't get the most out of the url stats! :(</b></span>
 </noscript>
 <div id="chr-stats">
 	<p>
-		Stats for <b>{{ stats.short_url }}</b><br />
+		Stats for <a href="{{ stats.short }}">{{ stats.short }}</a><br/>
 		<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
 	</p>
 	<div id="stats-bar-visits" class="stat">

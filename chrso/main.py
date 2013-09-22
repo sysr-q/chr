@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
+import collections
+
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
                    request)
-
 from flask.ext.wtf import Form, validators, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
                      BooleanField)
+from werkzeug.useragents import UserAgent
 
 from chrso import url
 
@@ -21,6 +23,12 @@ app = Flask(__name__)
 app.jinja_env.globals.update({
     "chr_header": lambda: app.config.get("CHR_HEADER", "chr"),
     "chr_sub_header": lambda: app.config.get("CHR_SUB_HEADER", "simple url shortening"),
+    "sorted": sorted,
+    "len": len,
+    # I honestly do not know whats going on here, it was just in the old
+    # chr stats template. The old __doc__ was: 
+    #   Strips the day out of a date.. I think.
+    "date_strip_day": lambda date_: date_.split("/")[1],
 })
 
 def get_shrink_form():
@@ -35,12 +43,14 @@ def index():
         if form.custom.data and url.exists(form.custom.data):
             flash("Sorry, that custom URL already exists.", "error")
             return render()
-        url_ = url.add(form.url.data,
-                   statistics=form.statistics.data,
-                   burn=form.burn.data,
-                   short=form.custom.data if form.custom.data else None,
-                   ua=request.user_agent.string,
-                   ip=request.remote_addr)
+        url_ = url.add(
+            form.url.data,
+            statistics=form.statistics.data,
+            burn=form.burn.data,
+            short=form.custom.data if form.custom.data else None,
+            ua=request.user_agent.string,
+            ip=request.remote_addr
+        )
         if url_:
             flash("Successfully shrunk your URL!", "success")
             surl = {
@@ -62,8 +72,31 @@ def reroute(short):  # redirect() would clash with flask.redirect
 
 @app.route("/<short>/stats")
 def stats(short):
-    # TODO: check url.exists(), pull all url hits, render some pretty graphs
-    abort(403)
+    if not url.exists(short):
+        return redirect(url_for("index"))
+    long_ = url.long(short)
+    hits = url.hits(short)
+    hits_len = len(hits)
+    hits_unique = collections.Counter(hit["ip"] for hit in hits)
+    hits_unique_len = len(hits_unique)
+    stats = {
+        "short": url_for("reroute", short=short, _external=True),
+        "long": long_,
+        "long_clip": "{0}{1}".format(long_[:50], "..." if len(long_) > 50 else ""),
+        "hits": {
+            "unique": hits_unique_len,
+            "return": hits_len - hits_unique_len if hits_len > 0 else 0,
+            # (unique / all)% of visitors only come once
+            "ratio": str(round(float(hits_unique_len) / float(hits_len), 2))[2:],
+            "all": hits_len,
+        },
+        "clicks": {
+            "platforms": collections.Counter(UserAgent(hit["useragent"]).platform.capitalize() for hit in hits),
+            "browsers": collections.Counter(UserAgent(hit["useragent"]).browser.capitalize() for hit in hits),
+            "pd": {}  # TODO: render per day click counts and stuff
+        },
+    }
+    return render_template("stats.html", stats=stats)
 
 @app.route("/<short>/delete/<key>")
 def delete(short, key):

@@ -136,9 +136,22 @@ a {
 }
 
 /* Header-related */
+.pretty-blue {
+    color: #2BA6CB;
+}
+.pretty-grey {
+    color: #999;
+}
+
 #chr-header {
     color: #2BA6CB;
     font-size: 400%;
+    margin-bottom: 0;
+    display: inline-block;
+}
+
+#chr-header-stats {
+    color: #2BA6CB;
     margin-bottom: 0;
     display: inline-block;
 }
