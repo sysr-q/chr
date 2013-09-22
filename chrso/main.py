@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import collections
+from datetime import datetime
+import time
 
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
                    request)
@@ -82,20 +84,36 @@ def stats(short):
     stats = {
         "short": url_for("reroute", short=short, _external=True),
         "long": long_,
-        "long_clip": "{0}{1}".format(long_[:50], "..." if len(long_) > 50 else ""),
+        "long_clip": "{0}{1}".format(long_[:35], "..." if len(long_) > 35 else ""),
         "hits": {
             "unique": hits_unique_len,
-            "return": hits_len - hits_unique_len if hits_len > 0 else 0,
+            "return": (hits_len - hits_unique_len) if hits_len > 0 else 0,
             # (unique / all)% of visitors only come once
             "ratio": str(round(float(hits_unique_len) / float(hits_len), 2))[2:],
             "all": hits_len,
         },
         "clicks": {
-            "platforms": collections.Counter(UserAgent(hit["useragent"]).platform.capitalize() for hit in hits),
-            "browsers": collections.Counter(UserAgent(hit["useragent"]).browser.capitalize() for hit in hits),
+            "platforms": collections.Counter(
+                UserAgent(hit["useragent"]).platform.capitalize() or "Unknown" for hit in hits
+            ),
+            "browsers": collections.Counter(
+                UserAgent(hit["useragent"]).browser.capitalize() or "Unknown" for hit in hits
+            ),
             "pd": {}  # TODO: render per day click counts and stuff
         },
     }
+    # Warning: garbage code
+    month_ago = month_ago_ext = int(time.time()) - (60 * 60 * 24 * 30)
+    for _ in xrange(1, 31):
+        month_ago_ext += (60 * 60 * 24)
+        day_strf = str(datetime.fromtimestamp(month_ago_ext).strftime("%m/%d"))
+        stats["clicks"]["pd"][day_strf] = 0
+    for hit in hits:
+        if hit["time"] < month_ago:
+            # Click more than a month old, not interested.
+            continue
+        day_strf = str(datetime.fromtimestamp(hit["time"]).strftime("%m/%d"))
+        stats["clicks"]["pd"][day_strf] += 1
     return render_template("stats.html", stats=stats)
 
 @app.route("/<short>/delete/<key>")
