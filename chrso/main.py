@@ -5,9 +5,9 @@ import time
 
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
                    request)
-from flask.ext.wtf import Form, validators, RecaptchaField
+from flask.ext.wtf import Form, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
-                     BooleanField)
+                     BooleanField, validators)
 from werkzeug.useragents import UserAgent
 
 from chrso import url
