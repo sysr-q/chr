@@ -88,6 +88,16 @@ def get_stats(short):
     hits_len = len(hits)
     hits_unique = collections.Counter(hit["ip"] for hit in hits)
     hits_unique_len = len(hits_unique)
+    def platform(h):
+        ua = UserAgent(h["useragent"])
+        if ua.platform is None:
+            return "Unknown"
+        return ua.platform.capitalize()
+    def browser(h):
+        ua = UserAgent(h["useragent"])
+        if ua.browser is None:
+            return "Unknown"
+        return ua.browser.capitalize()
     stats = {
         "error": False,
         "message": "",
@@ -102,12 +112,8 @@ def get_stats(short):
             "all": hits_len,
         },
         "clicks": {
-            "platforms": collections.Counter(
-                UserAgent(hit["useragent"]).platform.capitalize() or "Unknown" for hit in hits
-            ),
-            "browsers": collections.Counter(
-                UserAgent(hit["useragent"]).browser.capitalize() or "Unknown" for hit in hits
-            ),
+            "platforms": collections.Counter(map(platform, hits)),
+            "browsers": collections.Counter(map(browser, hits)),
             "pd": {}  # This is generated below..
         },
     }
