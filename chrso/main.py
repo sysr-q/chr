@@ -6,7 +6,7 @@ import random
 import urllib
 
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
-                   request)
+                   request, jsonify)
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
                      BooleanField, validators)
@@ -81,16 +81,16 @@ def reroute(short):  # redirect() would clash with flask.redirect
     url.hit(short, ua=request.user_agent.string, ip=request.remote_addr)
     return redirect(long_)
 
-@app.route("/<short>/stats")
-def stats(short):
-    if not url.exists(short):
-        return redirect(url_for("index"))
+def get_stats(short):
+    # Make sure "short" exists by now or you're goners.
     long_ = url.long(short)
     hits = url.hits(short)
     hits_len = len(hits)
     hits_unique = collections.Counter(hit["ip"] for hit in hits)
     hits_unique_len = len(hits_unique)
     stats = {
+        "error": False,
+        "message": "",
         "short": url_for("reroute", short=short, _external=True),
         "long": long_,
         "long_clip": "{0}{1}".format(long_[:35], "..." if len(long_) > 35 else ""),
@@ -123,7 +123,21 @@ def stats(short):
             continue
         day_strf = str(datetime.fromtimestamp(hit["time"]).strftime("%m/%d"))
         stats["clicks"]["pd"][day_strf] += 1
-    return render_template("stats.html", stats=stats)
+    return stats
+
+@app.route("/<short>/stats")
+def stats(short):
+    if not url.exists(short):
+        return redirect(url_for("index"))
+    stats_ = get_stats(short)
+    return render_template("stats.html", stats=stats_)
+
+@app.route("/<short>/stats.json")
+def stats_json(short):
+    if not url.exists(short):
+        return jsonify({"error": True, "message": "That shortened URL doesn't exist!"})
+    stats_ = get_stats(short)
+    return jsonify(stats_)
 
 @app.route("/<short>/delete/<key>")
 def delete(short, key):

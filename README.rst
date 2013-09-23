@@ -6,6 +6,12 @@ NB!
 As of the `v3 refactor <https://github.com/plausibility/chr/tree/v3-refactor>`_ how you interact with chr (as a sysadmin) has changed significantly. You still install it via PyPI (probably), but you'll have to run it with something like gunicorn rather than via a command line script explicity for chr.  
 More info on this later into the refactor.
 
+JSON in v3 and beyond
+---------------------
+If you want to get the statistics of a given URL in JSON format, you can simply smack `.json` on the end of the stats url (``http://blah.tld/x/stats.json``) and get back some lovely JSON.
+
+If the URL doesn't exist you'll get back something with ``error: true``, so just check the ``message`` field and you're good.
+
 ****
 
 .. _docs: http://chr.rtfd.org

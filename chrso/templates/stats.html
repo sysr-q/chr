@@ -133,15 +133,15 @@ $(document).ready(function() {
 	<span class="chr-noscript"><b>Without JavaScript, you won't see the pretty graphs! :(</b></span>
 </noscript>
 <div id="chr-stats">
+<p>
+	Stats for <a href="{{ stats.short }}">{{ stats.short|unquote }}</a><br/>
+	<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
+</p>
 {% if stats.hits.all == 0 %}
 	<p>
 		Nobody has visited your URL yet.. <b>:(</b>
 	</p>
 {% else %}
-	<p>
-		Stats for <a href="{{ stats.short }}">{{ stats.short|unquote }}</a><br/>
-		<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
-	</p>
 	<div id="stats-bar-visits" class="stat">
 		<noscript>
 			<h2 class="chr-header">Visits / day</h2>
