@@ -29,7 +29,7 @@ app.jinja_env.globals.update({
     "chr_sub_header": lambda: app.config.get("CHR_SUB_HEADER", "simple url shortening"),
     "sorted": sorted,
     "len": len,
-    "randground": lambda n, m: "{0}.png".format(random.randint(n, m)),  # >.>
+    "randground": lambda n, m: "img/{0}.png".format(random.randint(n, m)),  # >.>
     # I honestly do not know whats going on here, it was just in the old
     # chr stats template. The old __doc__ was: 
     #   Strips the day out of a date.. I think.
