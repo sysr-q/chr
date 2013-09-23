@@ -10,7 +10,11 @@ from flask import (Flask, render_template, abort, redirect, url_for, flash,
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
                      BooleanField, validators)
-from werkzeug.useragents import UserAgent
+from werkzeug.useragents import UserAgent, UserAgentParser
+# Monkey patch in an xbot++ recogniser
+UserAgentParser.browsers = tuple([(r"xbot\+\+", "xbotpp")] + list(UserAgentParser.browsers))
+UserAgentParser.platforms = tuple([(r"xbot\+\+", "hpux")] + list(UserAgentParser.platforms))
+UserAgent._parser = UserAgentParser()
 
 from chrso import url
 
