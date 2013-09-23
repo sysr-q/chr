@@ -218,10 +218,18 @@ span.resize-test {
     padding: 0 auto;
 }
 
+/* The things I have seen to get here... */
 #customize {
     width: 35px;
     float: right;
     font-size: 150%;
+    position: relative;
+}
+
+#customize-span {
+    position: absolute;
+    top: -1px;
+    left: 6px;
 }
 
 #customize-extras, #chr-recaptcha {

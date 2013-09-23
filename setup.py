@@ -10,7 +10,7 @@ def long_desc():
 
 kw = {
     "name": "chr",
-    "version": "3.0a1",
+    "version": "3.0.1",
     "description": "Minimalistic Python based URL shortening service",
     "long_description": long_desc(),
     "url": "https://github.com/plausibility/chr",
@@ -24,7 +24,6 @@ kw = {
     "install_requires": [
         "flask",
         "flask-wtf",
-        "recaptcha-client",
         "redis",
         "hiredis",
     ],

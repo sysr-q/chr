@@ -26,7 +26,9 @@
 <form method="POST" id="shrink-url" action="" data-chrso-submit="{{ url_for('index', json=True) }}">
 {{ form.hidden_tag() }}
 {{ form.url(id="url-to-shrink", class="pretty", placeholder="http://") }}
-<button id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">&#9881;</button>
+<a href="#" id="customize" class="button pretty enable-me tooltips" title="Customize URL" disabled="disabled">
+	<span id="customize-span">&#9881;</span>
+</a>
 <input name="shrink" type="submit" id="click-to-shrink" class="button pretty" value="Shrink!">
 
 <div id="customize-extras">
@@ -57,13 +59,13 @@
 		<h3 class="result-header">Long URL</h3><br>
 		<input type="text" class="pretty long bigger" value="{{ url.long }}"/><br>
 		<h3 class="result-header">Short URL</h3><br>
-		<input type="text" class="pretty short" value="{{ url.short }}"/><br>
+		<input type="text" class="pretty short" value="{{ url.short|unquote }}"/><br>
 		<h3 class="result-header eek">Delete URL</h3>
 		<span class="result-sub-header">(You'll want to save this)</span><br>
-		<input type="text" class="pretty delete bigger" value="{{ url.delete }}"/><br>
+		<input type="text" class="pretty delete bigger" value="{{ url.delete|unquote }}"/><br>
 		{% if not url.burn -%}
 		<h3 class="result-header">Statistics URL</h3><br>
-		<input type="text" class="pretty stats" value="{{ url.stats }}"/><br>
+		<input type="text" class="pretty stats" value="{{ url.stats|unquote }}"/><br>
 		{%- endif %}
 	</div>
 </div>

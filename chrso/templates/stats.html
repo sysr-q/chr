@@ -139,7 +139,7 @@ $(document).ready(function() {
 	</p>
 {% else %}
 	<p>
-		Stats for <a href="{{ stats.short }}">{{ stats.short }}</a><br/>
+		Stats for <a href="{{ stats.short }}">{{ stats.short|unquote }}</a><br/>
 		<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
 	</p>
 	<div id="stats-bar-visits" class="stat">

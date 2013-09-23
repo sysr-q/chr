@@ -2,6 +2,8 @@
 import collections
 from datetime import datetime
 import time
+import random
+import urllib
 
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
                    request)
@@ -27,10 +29,14 @@ app.jinja_env.globals.update({
     "chr_sub_header": lambda: app.config.get("CHR_SUB_HEADER", "simple url shortening"),
     "sorted": sorted,
     "len": len,
+    "randground": lambda n, m: "{0}.png".format(random.randint(n, m)),  # >.>
     # I honestly do not know whats going on here, it was just in the old
     # chr stats template. The old __doc__ was: 
     #   Strips the day out of a date.. I think.
     "date_strip_day": lambda date_: date_.split("/")[1],
+})
+app.jinja_env.filters.update({
+    "unquote": lambda s: urllib.unquote(s).decode("utf8"),  # <.<
 })
 
 def get_shrink_form():
@@ -102,7 +108,7 @@ def stats(short):
             "browsers": collections.Counter(
                 UserAgent(hit["useragent"]).browser.capitalize() or "Unknown" for hit in hits
             ),
-            "pd": {}  # TODO: render per day click counts and stuff
+            "pd": {}  # This is generated below..
         },
     }
     # Warning: garbage code
