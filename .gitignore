@@ -35,8 +35,8 @@ nosetests.xml
 .project
 .pydevproject
 
-# chr stuff
-chr_logs
+## chr stuff
+# old database files
 *.db
 # old source tree
 _chru
