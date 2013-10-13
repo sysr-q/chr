@@ -18,7 +18,12 @@ If you want to get the statistics of a given URL in JSON format, you can simply 
 
 If the URL doesn't exist you'll get back something with ``error: true``, so just check the ``message`` field and you're good.
 
-**TODO:** add an API endpoint to shorten/expand URLs.
+**TODO:**
+
+- add an API endpoint to shorten/expand URLs
+- update the docs to the new chrso tree
+- update chrw (oooold) so that it works with chrso tree
+- remove some base62 crud
 
 ****
 
