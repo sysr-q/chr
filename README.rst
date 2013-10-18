@@ -14,16 +14,18 @@ For now:
 
 JSON in v3 and beyond
 ---------------------
-If you want to get the statistics of a given URL in JSON format, you can simply smack `.json` on the end of the stats url (``http://blah.tld/x/stats.json``) and get back some lovely JSON.
+If you want to get the statistics of a given URL in JSON format, you can simply smack `.json` on the end of the stats url (``http://example.org/x/stats.json``) and get back some lovely JSON.
 
-If the URL doesn't exist you'll get back something with ``error: true``, so just check the ``message`` field and you're good.
+If the URL doesn't exist you'll get back something with ``error: true``, and a ``message`` field - check it and you're good.
 
 **TODO:**
 
-- add an API endpoint to shorten/expand URLs
-- update the docs to the new chrso tree
-- update chrw (oooold) so that it works with chrso tree
-- remove some base62 crud
+- [ ] add an API endpoint to shorten/expand URLs (check out ``wtforms-json`` or something)
+- [ ] update the docs to the new chrso tree
+- [ ] update `chrw <https://github.com/plausibility/chrw>`_ (oooold) so that it works with chrso tree
+- [x] remove some base62 crud
+- [ ] write a decent install/running guide
+- [ ] write a migration script for chru -> chrso trees
 
 ****
 
@@ -38,7 +40,7 @@ Features
 
 - Can shorten several billion (yes!) unique urls to a less than 6 character slug.
 - Can use reCAPTCHA to stop spammers from using the service for evil. (but it's optional!)
-- A live chr instance is located at `chr.so <http://chr.so>`_. (NB: this isn't the latest version)
+- A live chr instance is located at `uguu.us <http://uguu.us>`_. (NB: ``chr.so`` is the old source tree)
 
 Dependencies
 ------------
@@ -74,3 +76,4 @@ Contributors
 - huey
 - `Chris Leonello <http://www.jqplot.com>`_ (made jqPlot)
 - jaz303 (made tipsy)
+- `aki--aki <https://github.com/aki--aki>`_ convinced me to add JSON-y API stuff

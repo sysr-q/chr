@@ -94,9 +94,3 @@ def dehydrate(integer):
         string = true_chr(remainder) + string
         integer /= BASE
     return string
-
-def moonrunes(s, start=12448):
-    return "".join(unichr(ord(c) + start) for c in s)
-
-def demoonrunes(s, start=12448):
-    return "".join(chr(ord(c) - start) for c in s)
