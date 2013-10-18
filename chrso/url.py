@@ -7,6 +7,7 @@ import random
 import redis
 
 import chrso.base62
+from chrso import redis_namespace
 
 red = redis.StrictRedis()
 
@@ -23,26 +24,28 @@ def partial_format(part):
         return part.format(*args, **kwargs)
     return form
 
+ns = partial_format((redis_namespace or "chr") + ":{0}")
+
 schema = argparse.Namespace(**{
-    "last": "chr:last",  # INCR this, yo
-    "last_hit": "chr:last_hit",  # INCR this as well
-    "id_map": "chr:id_map",  # k/v map of short -> id
+    "last": ns("last"),  # INCR this, yo
+    "last_hit": ns("last_hit"),  # INCR this as well
+    "id_map": ns("id_map"),  # k/v map of short -> id
 
     # format in id from `id_map`
-    "url_long": partial_format("chr:url:{0}:long"),
-    "url_stats": partial_format("chr:url:{0}:stats"),  # {0,1} only pls
-    "url_burn": partial_format("chr:url:{0}:burn"),  # {0,1} only pls
-    "url_short": partial_format("chr:url:{0}:short"),
-    "url_useragent": partial_format("chr:url:{0}:useragent"),
-    "url_ip": partial_format("chr:url:{0}:ip"),
-    "url_time": partial_format("chr:url:{0}:time"),
-    "url_delete": partial_format("chr:url:{0}:delete"),  # deletion key
-    "url_hits": partial_format("chr:url:{0}:hits"),  # list of hit ids
+    "url_long": partial_format(ns("url:{0}:long")),
+    "url_stats": partial_format(ns("url:{0}:stats")),  # {0,1} only pls
+    "url_burn": partial_format(ns("url:{0}:burn")),  # {0,1} only pls
+    "url_short": partial_format(ns("url:{0}:short")),
+    "url_useragent": partial_format(ns("url:{0}:useragent")),
+    "url_ip": partial_format(ns("url:{0}:ip")),
+    "url_time": partial_format(ns("url:{0}:time")),
+    "url_delete": partial_format(ns("url:{0}:delete")),  # deletion key
+    "url_hits": partial_format(ns("url:{0}:hits")),  # list of hit ids
 
     # format in hit ids from `url_hits`, yo
-    "hit_useragent": partial_format("chr:hit:{0}:useragent"),  # UA string
-    "hit_ip": partial_format("chr:hit:{0}:ip"),
-    "hit_time": partial_format("chr:hit:{0}:time"),  # int(time.time())
+    "hit_useragent": partial_format(ns("hit:{0}:useragent")),  # UA string
+    "hit_ip": partial_format(ns("hit:{0}:ip")),
+    "hit_time": partial_format(ns("hit:{0}:time")),  # int(time.time())
 })
 
 def add(long_, statistics, burn, short=None, ua=None, ip=None, ptime=None, delete=None):
@@ -154,6 +157,10 @@ def hit(ident, ua=None, ip=None, ptime=None):
 
 
 def hits(ident):
+    """ Find all the corresponding hits for a given ident.
+
+        :param ident: an identifier for the URL we want to get hits for.
+    """
     if not exists(ident):
         return
     id_ = row_id(ident)
@@ -181,6 +188,10 @@ def should_burn(ident):
 
 
 def delete_key(ident):
+    """ Grab the key usable for deleting a URL.
+
+        :param ident: an identifier for the URL we want info about.
+    """
     if not exists(ident):
         return
     id_ = row_id(ident)
@@ -196,12 +207,20 @@ def exists(ident):
 
 
 def long(ident):
+    """ Get the long URL from a shortened ident.
+
+        :param ident: an identifier for the URL we want info about.
+    """
     if not exists(ident):
         return
     id_ = row_id(ident)
     return red.get(schema.url_long(id_))
 
 def row_id(ident):
+    """ Get the numerical row id for an ident.
+
+        :param ident: an identifier for the URL we want info about.
+    """
     if not exists(ident):
         return
     return red.hget(schema.id_map, ident)

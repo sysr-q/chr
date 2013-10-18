@@ -9,7 +9,7 @@
     characters, [no special characters] = {0..9}, {A..Z}, {a..z}
  
     I plan on using this to shorten the representation of possibly long ids,
-    a la url shortenters
+    a la url shorteners
  
     saturate()  takes the base 62 key, as a string, and turns it back into an integer
     dehydrate() takes an integer and turns it into the base 62 string

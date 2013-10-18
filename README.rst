@@ -21,10 +21,11 @@ If the URL doesn't exist you'll get back something with ``error: true``, and a `
 **TODO:**
 
 - [ ] add an API endpoint to shorten/expand URLs (check out ``wtforms-json`` or something)
-- [ ] update the docs to the new chrso tree
+- [x] update the docs to the new chrso tree
+- [ ] update the screenshots in the repo
 - [ ] update `chrw <https://github.com/plausibility/chrw>`_ (oooold) so that it works with chrso tree
 - [x] remove some base62 crud
-- [ ] write a decent install/running guide
+- [x] write a decent install/running guide (new docs)
 - [ ] write a migration script for chru -> chrso trees
 
 ****

@@ -1,20 +1,6 @@
 chr api documentation
 =====================
 
-.. automodule:: chru.api
+.. note::
 
-Contents
---------
-
-.. toctree::
-    :maxdepth: 2
-
-    wrappers
-
-API
------
-
-.. toctree::
-    :maxdepth: 2
-
-    v1/specs
+	This entire thing is TODO! Poke plausibility on GitHub if it's not set up yet.
