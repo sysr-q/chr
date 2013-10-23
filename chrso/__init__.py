@@ -2,5 +2,5 @@
 """ chrso - the leanest (perhaps), meanest (if you look at it right)
     URL shortener written with Flask in the entire world (maybe...).
 """
-__version__ = "3.0.7"
+__version__ = "3.0.8"
 redis_namespace = None

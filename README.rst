@@ -9,7 +9,7 @@ For now:
 
 - Clone the repo
 - ``python setup.py install``
-- Check ``example.py`` for more info on how to run it.
+- Check ``example.py`` (and the `docs <http://chr.rtfd.org>`_!) for more info on how to run it.
 - Use a command like: ``gunicorn -b 127.0.0.1:5000 -p /tmp/chr.pid example:app``
 
 JSON in v3 and beyond
@@ -21,18 +21,21 @@ If the URL doesn't exist you'll get back something with ``error: true``, and a `
 **TODO:**
 
 - [ ] add an API endpoint to shorten/expand URLs (check out ``wtforms-json`` or something)
+  - [ ] rather than half-baked ``@app.route`` calls, make an API blueprint
+  - [ ] add API keys so even if reCAPTCHA is enabled you can use it
 - [x] update the docs to the new chrso tree
 - [ ] update the screenshots in the repo
 - [ ] update `chrw <https://github.com/plausibility/chrw>`_ (oooold) so that it works with chrso tree
 - [x] remove some base62 crud
 - [x] write a decent install/running guide (new docs)
 - [ ] write a migration script for chru -> chrso trees
+  - [ ] move chr.so over to the latest chrso tree and link back there
+  - [ ] put this code tree on PyPI and explain changes in big bold font
+- [ ] provide example nginx (+ Apache/lighttpd?) configs
 
 ****
 
-.. _docs: http://chr.rtfd.org
-
-**chr** (coded under the name ``chrso``) is a Python based URL shortening service which uses Flask as a front end, and redis as the backend.
+**chr** (found in the package ``chrso``) is a Python based URL shortening service which uses Flask as a front end, and redis as the backend.
 
 It can shrink billions of unique URLs with less than 6 characters, run in the background with no human interaction, and it can fly like a bird -- or is that Super Man?
 

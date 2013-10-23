@@ -5,6 +5,7 @@ What good is a URL shortener if it's not shortening URLs? None, I say. **NONE!**
 
 Installation
 ------------
+
 Installing chr is as easy as following these simple steps:
 
 - Clone the latest repo: ``git clone https://github.com/plausibility/chr.git`` (then ``cd chr``)
@@ -15,7 +16,8 @@ Installing chr is as easy as following these simple steps:
 Want to configure your instance (hint: you probably do)? ``example.py`` has all the essentials.
 
 Running multiple instances
-^^^^^^^^^^^^^^^^^^^^^^^^^^
+--------------------------
+
 Assuming you're using something like gunicorn (as suggested), you can simply specify a different pid file, and that will handle itself.
 
 If you want to isolate the databases (let's be honest, you probably do), you'll have to specifically set ``chrso.redis_namespace`` to something specific to each.
@@ -37,18 +39,22 @@ Keep this in mind if you ever want to hit up the database to remove or modify UR
     other_app_setup()
 
 Validation
-^^^^^^^^^^
+----------
+
 When users submit a URL to be shortened, they're pushed against a rough URL-like regex provided by WTForms.
 
 There's no baked in checks for legitimate domains, ``200 OK`` replies or anything like that [open an issue on the repo if you're interested and I'll work on it].
 
 Logging
-^^^^^^^
+-------
+
 Logging is not implemented as of the ``3.x`` branch anymore - but there's not much that can happen, so don't fret.
+(Gunicorn probably provides it, not 100%)
 
 Moderation
-^^^^^^^^^^
-At the current time of writing, there is currently no way to moderate the shortened URLs built into chr.
+----------
+
+At the current time of writing [v3.0.8], there is currently no way to moderate the shortened URLs built into chr.
 
 If you're serious about removing links, or you need to remove a link which has been reported to you,
 you'll have to use redis-cli.
@@ -63,7 +69,7 @@ Say we want to remove ``url.example.org/foo`` because it's scum:
     "1"
     # Ensure it's the URL we're expecting
     redis 127.0.0.1:6379> get chr:url:1:long
-    "https://mallory.example.org/some_scummy.exe"
+    "https://mallory.example.com/some_scummy.exe"
     # Remove it from the id_map
     redis 127.0.0.1:6379> hdel chr:id_map 1
     (integer) 1

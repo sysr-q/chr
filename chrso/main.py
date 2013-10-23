@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime, timedelta
 import collections
-from datetime import datetime
-import time
+import calendar
 import random
 import urllib
+import time
 
 from flask import (Flask, render_template, abort, redirect, url_for, flash,
                    request, jsonify)
@@ -33,13 +34,13 @@ app.jinja_env.globals.update({
     "chr_sub_header": lambda: app.config.get("CHR_SUB_HEADER", "simple url shortening"),
     "sorted": sorted,
     "len": len,
-    # I honestly do not know whats going on here, it was just in the old
-    # chr stats template. The old __doc__ was: 
-    #   Strips the day out of a date.. I think.
+    # The old __doc__ was: ``Strips the day out of a date.. I think.``
     "date_strip_day": lambda date_: date_.split("/")[1],
 })
+
+# This stops nasty bugs if there's unicode in the URLs and stuff.
 app.jinja_env.filters.update({
-    "unquote": lambda s: urllib.unquote(s).decode("utf8"),  # <.<
+    "unquote": lambda s: urllib.unquote(s).decode("utf8"),
 })
 
 def get_shrink_form():
@@ -84,7 +85,7 @@ def reroute(short):  # redirect() would clash with flask.redirect
     url.hit(short, ua=request.user_agent.string, ip=request.remote_addr)
     return redirect(long_)
 
-def get_stats(short):
+def get_stats(short, clip=35):
     # Make sure "short" exists by now or you're goners.
     long_ = url.long(short)
     hits = url.hits(short)
@@ -106,7 +107,7 @@ def get_stats(short):
         "message": "",
         "short": url_for("reroute", short=short, _external=True),
         "long": long_,
-        "long_clip": "{0}{1}".format(long_[:35], "..." if len(long_) > 35 else ""),
+        "long_clip": "{0}{1}".format(long_[:clip], "..." if len(long_) > clip else ""),
         "hits": {
             "unique": hits_unique_len,
             "return": (hits_len - hits_unique_len) if hits_len > 0 else 0,
@@ -120,18 +121,17 @@ def get_stats(short):
             "pd": {}  # This is generated below..
         },
     }
-    # Warning: garbage code
-    month_ago = month_ago_ext = int(time.time()) - (60 * 60 * 24 * 30)
+    x = datetime.now() - timedelta(days=30)
+    month = calendar.timegm(x.timetuple())
     for _ in xrange(1, 31):
-        month_ago_ext += (60 * 60 * 24)
-        day_strf = str(datetime.fromtimestamp(month_ago_ext).strftime("%m/%d"))
-        stats["clicks"]["pd"][day_strf] = 0
+        # This has to go first or else you get KeyErrors later.
+        x += timedelta(days=1)
+        stats["clicks"]["pd"][x.strftime("%m/%d")] = 0
+    print stats["clicks"]["pd"]
     for hit in hits:
-        if hit["time"] < month_ago:
-            # Click more than a month old, not interested.
+        if hit["time"] < month: # if it's more than a month old we don't care
             continue
-        day_strf = str(datetime.fromtimestamp(hit["time"]).strftime("%m/%d"))
-        stats["clicks"]["pd"][day_strf] += 1
+        stats["clicks"]["pd"][datetime.fromtimestamp(hit["time"]).strftime("%m/%d")] += 1
     return stats
 
 @app.route("/<short>/stats")
