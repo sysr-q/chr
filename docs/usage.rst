@@ -77,3 +77,39 @@ Say we want to remove ``url.example.org/foo`` because it's scum:
     $
 
 Simply removing a URL from the ``id_map`` will mean it's not accessible for users, but you will still have the long/short url, related info (IP, useragent) about the submitter, etc.
+
+Clean deployment
+----------------
+If you want to deploy chr somewhere in production (which you.. would if you're reading this) you'll want to look at one of the standard deployment options for Flask.
+
+It's also a nice idea to bind to a unix socket rather than a port. Just tidier:
+
+``gunicorn -b unix:/tmp/chr.sock -p /tmp/chr.pid example:app``
+
+nginx
+^^^^^
+
+.. code-block::
+
+    upstream chrso {
+        server unix:/tmp/chr.sock;
+    }
+
+    server {
+        server_name chr.so;
+
+        location / {
+            proxy_pass http://chrso;
+        }
+
+        # Let nginx serve static files
+        location /static/ {
+            # Wherever you installed `chrso`
+            root /path/to/chrso;
+        }
+    }
+
+lighttpd
+^^^^^^^^
+
+TODO!
