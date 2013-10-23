@@ -21,16 +21,20 @@ If the URL doesn't exist you'll get back something with ``error: true``, and a `
 **TODO:**
 
 - [ ] add an API endpoint to shorten/expand URLs (check out ``wtforms-json`` or something)
+
   - [ ] rather than half-baked ``@app.route`` calls, make an API blueprint
   - [ ] add API keys so even if reCAPTCHA is enabled you can use it
+
 - [x] update the docs to the new chrso tree
 - [ ] update the screenshots in the repo
 - [ ] update `chrw <https://github.com/plausibility/chrw>`_ (oooold) so that it works with chrso tree
 - [x] remove some base62 crud
 - [x] write a decent install/running guide (new docs)
 - [ ] write a migration script for chru -> chrso trees
+
   - [ ] move chr.so over to the latest chrso tree and link back there
   - [ ] put this code tree on PyPI and explain changes in big bold font
+
 - [ ] provide example nginx (+ Apache/lighttpd?) configs
 
 ****
