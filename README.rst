@@ -36,6 +36,10 @@ If the URL doesn't exist you'll get back something with ``error: true``, and a `
   - [ ] put this code tree on PyPI and explain changes in big bold font
 
 - [ ] provide example nginx (+ Apache/lighttpd?) configs
+- [ ] make ``url.stats()`` cache the results at redis for a few (5?) minutes
+
+  - alternatively, we could implement ``If-Modified-Since``, but that'd be tougher.
+
 
 ****
 

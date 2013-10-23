@@ -1,10 +1,19 @@
 # -*- coding: utf-8 -*-
-import time
+from datetime import datetime, timedelta
+import collections
 import argparse
-import string
+import calendar
 import random
+import string
+import time
 
 import redis
+from flask import url_for
+from werkzeug.useragents import UserAgent, UserAgentParser
+# Monkey patch in an xbot++ recogniser
+UserAgentParser.browsers = tuple([(r"xbot\+\+", "xbot++")] + list(UserAgentParser.browsers))
+UserAgentParser.platforms = tuple([(r"xbot\+\+", "hpux")] + list(UserAgentParser.platforms))
+UserAgent._parser = UserAgentParser()
 
 import chrso.base62
 from chrso import redis_namespace
@@ -156,6 +165,12 @@ def hit(ident, ua=None, ip=None, ptime=None):
     return True
 
 
+def has_stats(ident):
+    if not exists(ident):
+        return False
+    return bool(int(red.get(schema.url_stats(row_id(ident)))))
+
+
 def hits(ident):
     """ Find all the corresponding hits for a given ident.
 
@@ -173,6 +188,71 @@ def hits(ident):
             "ip": red.get(schema.hit_ip(hit))
         })
     return hits
+
+
+def stats(ident, clip=35):
+    """ Pull a bunch of statistics about the given ident.
+        Click statistics, useragents, long URL, all the good stuff.
+
+        :param ident: an identifier for the URL we want to get stats for.
+        :param clip: the length to "clip" down long URLs to. (so they can
+            be displayed to end-users cleanly)
+    """
+    if not exists(ident):
+        return {
+            "error": True,
+            "message": "The shortened URL doesn't exist!"
+        }
+    if not has_stats(ident):
+        return {
+            "error": True,
+            "message": "The shortened URL has statistics disabled."
+        }
+    long_ = long(ident)
+    hits_ = hits(ident)
+    hits_len = len(hits_)
+    hits_unique = collections.Counter(hit["ip"] for hit in hits_)
+    hits_unique_len = len(hits_unique)
+    def platform(h):
+        ua = UserAgent(h["useragent"])
+        if ua.platform is None:
+            return "Unknown"
+        return ua.platform.capitalize()
+    def browser(h):
+        ua = UserAgent(h["useragent"])
+        if ua.browser is None:
+            return "Unknown"
+        return ua.browser.capitalize()
+    stats = {
+        "error": False,
+        "message": "",
+        "short": url_for("reroute", short=ident, _external=True),
+        "long": long_,
+        "long_clip": "{0}{1}".format(long_[:clip], "..." if len(long_) > clip else ""),
+        "hits": {
+            "unique": hits_unique_len,
+            "return": (hits_len - hits_unique_len) if hits_len > 0 else 0,
+            # (unique / all)% of visitors only come once
+            "ratio": (str(round(float(hits_unique_len) / float(hits_len), 2))[2:]) if hits_len > 0 else None,
+            "all": hits_len,
+        },
+        "clicks": {
+            "platforms": collections.Counter(map(platform, hits_)),
+            "browsers": collections.Counter(map(browser, hits_)),
+            "pd": {}  # This is generated below..
+        },
+    }
+    x = datetime.now() - timedelta(days=30)
+    month = calendar.timegm(x.timetuple())
+    for _ in xrange(1, 31):
+        # This has to go first or else you get KeyErrors later.
+        x += timedelta(days=1)
+        stats["clicks"]["pd"][x.strftime("%m/%d")] = 0
+    for hit in hits_:
+        if hit["time"] < month: # if it's more than a month old we don't care
+            continue
+        stats["clicks"]["pd"][datetime.fromtimestamp(hit["time"]).strftime("%m/%d")] += 1
+    return stats
 
 
 def should_burn(ident):
