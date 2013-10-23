@@ -16,6 +16,7 @@ UserAgentParser.platforms = tuple([(r"xbot\+\+", "hpux")] + list(UserAgentParser
 UserAgent._parser = UserAgentParser()
 
 import chrso.base62
+from chrso.main import flash
 from chrso import redis_namespace
 
 red = redis.StrictRedis()
@@ -116,7 +117,7 @@ def remove(ident):
     if hits:
         hits = reduce(lambda x, y: x+y, [[f(i) for f in fmts] for i in hits])
     red.hdel(schema.id_map, short)  # remove the short from our id_map
-    red.delete(
+    return bool(red.delete(
         schema.url_long(id_),
         schema.url_stats(id_),
         schema.url_burn(id_),
@@ -126,8 +127,7 @@ def remove(ident):
         schema.url_time(id_),
         schema.url_delete(id_),
         *hits  # kill all the hits too
-    )
-    return True
+    ))
 
 
 def hit(ident, ua=None, ip=None, ptime=None):
@@ -199,15 +199,11 @@ def stats(ident, clip=35):
             be displayed to end-users cleanly)
     """
     if not exists(ident):
-        return {
-            "error": True,
-            "message": "The shortened URL doesn't exist!"
-        }
+        flash("The shortened URL doesn't exist!", "error")
+        return {}
     if not has_stats(ident):
-        return {
-            "error": True,
-            "message": "The shortened URL has statistics disabled."
-        }
+        flash("The shortened URL has statistics disabled.", "error")
+        return {}
     long_ = long(ident)
     hits_ = hits(ident)
     hits_len = len(hits_)

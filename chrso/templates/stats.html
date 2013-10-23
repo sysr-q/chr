@@ -24,8 +24,8 @@ $(document).ready(function() {
 	$("div#chr-stats").addClass("js");
 
 	var pie_visits_values = [
-		['Unique ({{ stats.hits.unique }})', {{ stats.hits.unique }}],
-		['Repeat ({{ stats.hits.return }})', {{ stats.hits.return }}]
+		['Unique ({{ res.hits.unique }})', {{ res.hits.unique }}],
+		['Repeat ({{ res.hits.return }})', {{ res.hits.return }}]
 	];
 	var pie_visits = $.jqplot('stats-pie-visits', [pie_visits_values], {
 		animate: !$.jqplot.use_excanvas,
@@ -40,12 +40,12 @@ $(document).ready(function() {
 			show: true
 		},
 		title: {
-			text: 'Visitors ({{ stats.hits.all }})',
+			text: 'Visitors ({{ res.hits.all }})',
 			show: true
 		}
 	});
 
-	var pie_systems_values = [{% for k,v in stats.clicks.platforms.items() %}
+	var pie_systems_values = [{% for k,v in res.clicks.platforms.items() %}
 		["{{ k }}", {{ v }}],
 	{% endfor %}];
 	var pie_systems = $.jqplot('stats-pie-systems', [pie_systems_values], {
@@ -66,7 +66,7 @@ $(document).ready(function() {
 		}
 	});
 
-	var pie_browsers_values = [{% for k,v in stats.clicks.browsers.items() %}
+	var pie_browsers_values = [{% for k,v in res.clicks.browsers.items() %}
 		["{{ k }}", {{ v }}],
 	{% endfor %}];
 	var pie_browsers = $.jqplot('stats-pie-browsers', [pie_browsers_values], {
@@ -87,10 +87,10 @@ $(document).ready(function() {
 		}
 	});
 
-	var bar_visits_values = [{% for k,v in sorted(stats.clicks.pd.items()) -%}
+	var bar_visits_values = [{% for k,v in sorted(res.clicks.pd.items()) -%}
 		{% if v == 0 %}''{% else %}{{ v }}{% endif %},
 	{%- endfor %}];
-	var bar_visits_rows = [{% for k,v in sorted(stats.clicks.pd.items()) -%}
+	var bar_visits_rows = [{% for k,v in sorted(res.clicks.pd.items()) -%}
 		{% if v == 0 %}''{% else %}'{{ date_strip_day(k) }}'{% endif %},
 	{%- endfor %}];
 	var bar_visits = $.jqplot('stats-bar-visits', [bar_visits_values], {
@@ -107,7 +107,7 @@ $(document).ready(function() {
 		},
 		highlighter: { show: true },
 		title: {
-			text: 'Clicks (last {{ len(stats.clicks.pd.keys()) }} days)',
+			text: 'Clicks (last {{ len(res.clicks.pd.keys()) }} days)',
 			show: true
 		},
 		cursor: {
@@ -134,10 +134,10 @@ $(document).ready(function() {
 </noscript>
 <div id="chr-stats">
 <p>
-	Stats for <a href="{{ stats.short }}">{{ stats.short|unquote }}</a><br/>
-	<b><a href="{{ stats.long }}">{{ stats.long_clip }}</a></b>
+	Stats for <a href="{{ res.short }}">{{ res.short|unquote }}</a><br/>
+	<b><a href="{{ res.long }}">{{ res.long_clip }}</a></b>
 </p>
-{% if stats.hits.all == 0 %}
+{% if res.hits.all == 0 %}
 	<p>
 		Nobody has visited your URL yet.. <b>:(</b>
 	</p>
@@ -145,7 +145,7 @@ $(document).ready(function() {
 	<div id="stats-bar-visits" class="stat">
 		<noscript>
 			<h2 class="chr-header">Visits / day</h2>
-			<p>{% for k,v in sorted(stats.clicks.pd.items()) -%}
+			<p>{% for k,v in sorted(res.clicks.pd.items()) -%}
 					{% if v != 0 %}
 						{{ k }}: <b>{{ v }}</b><br />
 					{% endif %}
@@ -155,7 +155,7 @@ $(document).ready(function() {
 	<div id="stats-pie-systems" class="stat">
 		<noscript>
 			<h2 class="chr-header">Systems</h2>
-			<p>{% for k,v in stats.clicks.platforms.items() -%}
+			<p>{% for k,v in res.clicks.platforms.items() -%}
 				{{ k }}: <b>{{ v }}</b><br />
 			{%- endfor %}</p>
 		</noscript>
@@ -164,16 +164,16 @@ $(document).ready(function() {
 		<noscript>
 			<h2 class="chr-header">Visits</h2>
 			<p>
-				Unique: <b>{{ stats.hits.unique }}</b><br />
-				Return: <b>{{ stats.hits.return }}</b><br />
-				<b>{{ stats.hits.ratio }}</b>% of visitors only come once.
+				Unique: <b>{{ res.hits.unique }}</b><br />
+				Return: <b>{{ res.hits.return }}</b><br />
+				<b>{{ res.hits.ratio }}</b>% of visitors only come once.
 			</p>
 		</noscript>
 	</div>
 	<div id="stats-pie-browsers" class="stat">
 		<noscript>
 			<h2 class="chr-header">Browsers</h2>
-			<p>{% for k,v in stats.clicks.browsers.items() -%}
+			<p>{% for k,v in res.clicks.browsers.items() -%}
 				{{ k }}: <b>{{ v }}</b><br />
 			{%- endfor -%}</p>
 		</noscript>

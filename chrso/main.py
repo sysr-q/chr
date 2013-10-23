@@ -1,11 +1,24 @@
 # -*- coding: utf-8 -*-
+from functools import wraps
 import urllib
+import re
 
-from flask import (Flask, render_template, abort, redirect, url_for, flash,
-                   request, jsonify)
+from flask import (Flask, render_template, abort, redirect, url_for,
+                   flash as _flash, request, jsonify, g, Response, make_response)
 from flask.ext.wtf import Form, RecaptchaField
 from wtforms import (TextField, PasswordField, IntegerField,
                      BooleanField, validators)
+
+# Above url import for circ. deps.
+def flash(message, type_=None):
+    """ Replacement to Flask's flash() for "magic" functionality in chr.
+        If you want to use the real flash, use _flash() or flask.flash itself.
+
+        flash("SOMETHING", "error") if things go wrong
+        flash("SOMETHING", "success") if things go right
+    """
+    f = (message, type_)
+    g.flashes.append(f)
 
 from chrso import url
 
@@ -36,6 +49,46 @@ app.jinja_env.filters.update({
 def get_shrink_form():
     return ShrinkCaptcha() if "RECAPTCHA_PUBLIC_KEY" in app.config else ShrinkForm()
 
+@app.before_request
+def before_request():
+    g.is_api_req = bool(re.findall(r"\.json$", request.path))
+    g.flashes = []
+
+@app.after_request
+def after_request(res):
+    if not g.is_api_req:
+        # Flash all our flashes
+        map(lambda f: _flash(*f), g.flashes)
+    if not hasattr(res, "_ret_dict") or res._ret_dict is None:
+        # Too specific for us, let's not screw around.
+        return res
+    res = res._ret_dict
+    errors = filter(lambda f: len(f) >= 2 and f[1] == "error", g.flashes)
+    if g.is_api_req:
+        res["error"] = bool(errors)
+        # Backwards compat.. Sort of?
+        res.setdefault("message", "Check `messages` instead, buddy.")
+        res["messages"] = map(lambda f: f[0], g.flashes)
+        # Not interesting to API consumers.
+        res.pop("_template", None)
+        return jsonify(res)
+    return make_response(render_template(res["_template"], res=res))
+
+def responsify(f):
+    # TODO: document this magic
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        ret = f(*args, **kwargs)
+        if isinstance(ret, Response):
+            ret._ret_dict = None
+            return ret
+        res = Response(ret)
+        res._ret_dict = None
+        if isinstance(ret, dict):
+            res._ret_dict = ret
+        return res
+    return decorated
+
 @app.route("/", methods=["GET", "POST"])
 def index():
     form = get_shrink_form()
@@ -43,7 +96,7 @@ def index():
     render = lambda: render_template("index.html", form=form, url=surl)
     if form.validate_on_submit():
         if form.custom.data and url.exists(form.custom.data):
-            flash("Sorry, that custom URL already exists.", "error")
+            _flash("Sorry, that custom URL already exists.", "error")
             return render()
         url_ = url.add(
             form.url.data,
@@ -54,7 +107,7 @@ def index():
             ip=request.remote_addr
         )
         if url_:
-            flash("Successfully shrunk your URL!", "success")
+            _flash("Successfully shrunk your URL!", "success")
             surl = {
                 "long": form.url.data,
                 "short": url_for("reroute", short=url_[0], _external=True),
@@ -75,24 +128,26 @@ def reroute(short):  # redirect() would clash with flask.redirect
     url.hit(short, ua=request.user_agent.string, ip=request.remote_addr)
     return redirect(long_)
 
-@app.route("/<short>/stats")
-def stats(short):
-    if not url.exists(short):
-        return redirect(url_for("index"))
-    if not url.has_stats(short):
-        return redirect(url_for("index"))
-    return render_template("stats.html", stats=url.stats(short))
-
 @app.route("/<short>/stats.json")
-def stats_json(short):
-    return jsonify(url.stats(short))
+@app.route("/<short>/stats")
+@responsify
+def stats(short):
+    stats_ = url.stats(short)
+    stats_["_template"] = "stats.html"
+    if not g.is_api_req and stats_["error"]:
+        return redirect(url_for("index"))
+    return stats_
 
+@app.route("/<short>/delete/<key>.json")
 @app.route("/<short>/delete/<key>")
+@responsify
 def delete(short, key):
-    if not url.exists(short):
-        return redirect(url_for("index"))
-    if key != url.delete_key(short):
-        return redirect(url_for("index"))
-    url.remove(short)
+    empty_or_redir = lambda: {} if g.is_api_req else redirect(url_for("index"))
+    if not url.exists(short) or key != url.delete_key(short):
+        flash("URL doesn't exist or deletion key is incorrect.", "error")
+        return empty_or_redir()
+    if not url.remove(short):
+        flash("Something dun goofed! Sorry.", "error")
+        return empty_or_redir()
     flash("Successfully deleted {0}!".format(url_for("reroute", short=short, _external=True)), "success")
-    return redirect(url_for("index"))
+    return empty_or_redir()
