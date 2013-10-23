@@ -89,7 +89,7 @@ It's also a nice idea to bind to a unix socket rather than a port. Just tidier:
 nginx
 ^^^^^
 
-.. code-block::
+.. code-block:: conf
 
     upstream chrso {
         server unix:/tmp/chr.sock;
